@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  # SQL Server Service
+  sqlserver:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    environment:
+      SA_PASSWORD: "Masterkey1"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - backend
+    volumes:
+      - sql-data:/var/opt/mssql  # Persist SQL Server data
+
+networks:
+  backend:
+
+volumes:
+  sql-data:

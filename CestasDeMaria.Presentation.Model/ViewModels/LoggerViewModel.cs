@@ -9,5 +9,6 @@ namespace CestasDeMaria.Presentation.Model.ViewModels
         public string Methodsignature { get; set; }
         public string Methodparameters { get; set; }
         public string Stacktrace { get; set; }
+        public AdminsViewModel Admins { get; set; }
     }
 }

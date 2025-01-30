@@ -82,7 +82,7 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
             if (!string.IsNullOrEmpty(term))
             {
-                query = query.Where(c => c.Id.Equals(term));
+                query = query.Where(c => c.Name.ToUpper().Contains(term.ToUpper()) || c.Username.ToUpper().Contains(term.ToUpper()));
             }
 
             var total = await GetAllPagedTotalAsync(query, include);

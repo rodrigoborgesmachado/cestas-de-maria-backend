@@ -114,7 +114,7 @@ namespace CestasDeMaria.Application.Services
                     subject = "Recuperar de senha";
                     break;
                 case Enums.EmailType.Wellcome:
-                    subject = "Bem vindo - Telepedido";
+                    subject = "Bem vindo - Cestas de Maria";
                     break;
             }
 
@@ -131,6 +131,7 @@ namespace CestasDeMaria.Application.Services
                 IsActive = 1,
                 IsDeleted = 0,
                 Retries = 0,
+                Adminid = 1
             };
 
             return await SendMail(mainDTO);

@@ -12,7 +12,7 @@ namespace CestasDeMaria.Application.Services
     {
         private readonly IMainRepository _mainRepository;
         private readonly Settings _settings;
-        private string[] allowInclude = new string[] { };
+        private string[] allowInclude = new string[] { "Admins" };
 
         public LoggerAppService(IMainRepository mainRepository, IOptions<Settings> options)
         {

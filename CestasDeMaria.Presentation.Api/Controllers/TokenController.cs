@@ -41,6 +41,15 @@ namespace CestasDeMaria.Presentation.Api.Controllers
                 return Results.Unauthorized();
             }
 
+            if (result.IsActive != 1 || result.IsDeleted == 1)
+            {
+                return Results.Json(new
+                {
+                    code = 402,
+                    message = "Senha incorreta!"
+                });
+            }
+
             if(!result.Passwordhash.Equals(request.Password)) 
             { 
                 return Results.Json(new {

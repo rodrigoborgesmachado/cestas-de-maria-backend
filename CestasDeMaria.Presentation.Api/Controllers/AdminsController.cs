@@ -122,6 +122,13 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         public async Task<IActionResult> Post([FromBody] MainViewModel model)
         {
             var mainDto = model.ProjectedAs<MainDTO>();
+
+            var exists = await _mainAppService.GetByUsernameAsync(mainDto.Username);
+            if(exists != null)
+            {
+                return BadRequest("Usuário já existe!");
+            }
+
             var result = await _mainAppService.InsertAsync(mainDto);
 
             return Ok(result);
@@ -137,6 +144,36 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         {
             var mainDto = model.ProjectedAs<MainDTO>();
             var result = await _mainAppService.UpdateAsync(mainDto);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+		/// Update
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns><![CDATA[Task<IActionResult>]]></returns>
+        [HttpPost("inactive-user/{id}")]
+        public async Task<IActionResult> InactiveUserAsync(long id)
+        {
+            var user = await tokenController.GetUserFromRequest();
+
+            var result = await _mainAppService.InactiveUserAsync(id, user.id);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+		/// Update
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns><![CDATA[Task<IActionResult>]]></returns>
+        [HttpPost("active-user/{id}")]
+        public async Task<IActionResult> ActiveUserAsync(long id)
+        {
+            var user = await tokenController.GetUserFromRequest();
+
+            var result = await _mainAppService.ActiveUserAsync(id, user.id);
 
             return Ok(result);
         }

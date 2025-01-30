@@ -19,5 +19,9 @@ namespace CestasDeMaria.Application.Interfaces
         Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, string isActive = null, string term = null, string orderBy = null, string? include = null);
 
         Task<string> GetReport(int quantityMax, string isActive = null, string term = null, string orderBy = null, string? include = null);
+
+        Task<MainDTO> InactiveUserAsync(long id, long user);
+
+        Task<MainDTO> ActiveUserAsync(long id, long user);
     }
 }

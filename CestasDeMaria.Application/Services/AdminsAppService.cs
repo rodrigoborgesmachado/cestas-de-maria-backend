@@ -2,6 +2,7 @@ using IBlobStorageService = CestasDeMaria.Domain.Interfaces.Services.IBlobStorag
 using ILoggerService = CestasDeMaria.Application.Interfaces.ILoggerAppService;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.IAdminsRepository;
 using IMainService = CestasDeMaria.Application.Interfaces.IAdminsAppService;
+using IMailMessageService = CestasDeMaria.Application.Interfaces.IMailMessageAppService;
 using Main = CestasDeMaria.Domain.Entities.Admins;
 using MainDTO = CestasDeMaria.Application.DTO.AdminsDTO;
 using Microsoft.Extensions.Options;
@@ -14,14 +15,16 @@ namespace CestasDeMaria.Application.Services
     {
         private readonly IMainRepository _mainRepository;
         private readonly ILoggerService _loggerService;
+        private readonly IMailMessageService _mailMessageService;
 
         private string[] allowInclude = new string[] { };
 
-        public AdminsAppService(IBlobStorageService blobStorageService, IOptions<Settings> options, IMainRepository mainRepository, ILoggerService loggerService)
+        public AdminsAppService(IBlobStorageService blobStorageService, IOptions<Settings> options, IMainRepository mainRepository, ILoggerService loggerService, IMailMessageService mailMessageService)
             : base(blobStorageService, options)
         {
             _mainRepository = mainRepository;
             _loggerService = loggerService;
+            _mailMessageService = mailMessageService;
         }
 
         public async Task<IEnumerable<MainDTO>> GetAllAsync(string? include = null)
@@ -65,6 +68,40 @@ namespace CestasDeMaria.Application.Services
             var main = mainDto.ProjectedAs<Main>();
 
             _mainRepository.Add(main);
+            await _mailMessageService.SendMail(main.Username, new string[] { _settings.PortalUrl, main.Name }, Infrastructure.CrossCutting.Enums.Enums.EmailType.Wellcome);
+
+            await _mainRepository.CommitAsync();
+
+            return main.ProjectedAs<MainDTO>();
+        }
+
+        public async Task<MainDTO> InactiveUserAsync(long id, long user)
+        {
+            var main = await _mainRepository.GetAsync(id);
+            
+            await _loggerService.InsertAsync($"Inativando usuário {main.Username}", user);
+
+            main.Updated = DateTime.UtcNow;
+            main.IsDeleted = 1;
+            main.IsActive = 0;
+
+            _mainRepository.Update(main);
+            await _mainRepository.CommitAsync();
+
+            return main.ProjectedAs<MainDTO>();
+        }
+
+        public async Task<MainDTO> ActiveUserAsync(long id, long user)
+        {
+            var main = await _mainRepository.GetAsync(id);
+
+            await _loggerService.InsertAsync($"Ativando usuário {main.Username}", user);
+
+            main.Updated = DateTime.UtcNow;
+            main.IsDeleted = 1;
+            main.IsActive = 0;
+
+            _mainRepository.Update(main);
             await _mainRepository.CommitAsync();
 
             return main.ProjectedAs<MainDTO>();

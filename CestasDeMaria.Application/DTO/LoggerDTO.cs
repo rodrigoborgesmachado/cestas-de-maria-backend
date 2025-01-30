@@ -9,5 +9,6 @@ namespace CestasDeMaria.Application.DTO
         public string Methodsignature { get; set; }
         public string Methodparameters { get; set; }
         public string Stacktrace { get; set; }
+        public AdminsDTO Admins { get; set; }
     }
 }

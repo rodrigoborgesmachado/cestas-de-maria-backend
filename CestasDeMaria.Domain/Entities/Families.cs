@@ -19,5 +19,7 @@ namespace CestasDeMaria.Domain.Entities
         public long Familystatusid { get; set; }
         public int DeliveryWeek { get; set; }
         public Familystatus Familystatus { get; set; }
+        public Admins Admins { get; set; }
+        public IEnumerable<Familyfamilystatushistory> Familyfamilystatushistory { get; set; }
     }
 }

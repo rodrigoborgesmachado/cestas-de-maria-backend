@@ -7,5 +7,8 @@ namespace CestasDeMaria.Domain.Entities
         public long Familyid { get; set; }
         public long Oldfamilystatusid { get; set; }
         public long Newfamilystatusid { get; set; }
+        public Families Families { get; set; }
+        public Familystatus NewFamilystatus { get; set; }
+        public Familystatus OldFamilystatus { get; set; }
     }
 }

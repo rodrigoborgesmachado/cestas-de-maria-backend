@@ -12,7 +12,7 @@ namespace CestasDeMaria.Application.Interfaces
 
         Task<MainDTO> InsertAsync(MainDTO mainDto);
 
-        Task<MainDTO> UpdateAsync(MainDTO mainDto);
+        Task<MainDTO> UpdateAsync(long id, MainDTO mainDto);
 
         Task<MainDTO> RemoveAsync(MainDTO mainDto);
 

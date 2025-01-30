@@ -147,11 +147,15 @@ namespace CestasDeMaria.Presentation.Api.Controllers
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns><![CDATA[Task<IActionResult>]]></returns>
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] MainViewModel model)
+        [HttpPost("edit/{id}")]
+        public async Task<IActionResult> Put(long id, [FromBody] MainViewModel model)
         {
+            var user = await tokenController.GetUserFromRequest();
+            
             var mainDto = model.ProjectedAs<MainDTO>();
-            var result = await _mainAppService.UpdateAsync(mainDto);
+            mainDto.Updatedby = user.id;
+
+            var result = await _mainAppService.UpdateAsync(id, mainDto);
 
             return Ok(result);
         }

@@ -2,6 +2,7 @@ using IBlobStorageService = CestasDeMaria.Domain.Interfaces.Services.IBlobStorag
 using ILoggerService = CestasDeMaria.Application.Interfaces.ILoggerAppService;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.IFamiliesRepository;
 using IMainService = CestasDeMaria.Application.Interfaces.IFamiliesAppService;
+using IHistoryService = CestasDeMaria.Application.Interfaces.IFamilyfamilystatushistoryAppService;
 using Main = CestasDeMaria.Domain.Entities.Families;
 using MainDTO = CestasDeMaria.Application.DTO.FamiliesDTO;
 using Microsoft.Extensions.Options;
@@ -15,14 +16,16 @@ namespace CestasDeMaria.Application.Services
     {
         private readonly IMainRepository _mainRepository;
         private readonly ILoggerService _loggerService;
+        private readonly IHistoryService _historyService;
 
-        private string[] allowInclude = new string[] { "Familystatus" };
+        private string[] allowInclude = new string[] { "Familystatus", "Familyfamilystatushistory", "Familyfamilystatushistory.NewFamilystatus", "Familyfamilystatushistory.OldFamilystatus", "Admins" };
 
-        public FamiliesAppService(IBlobStorageService blobStorageService, IOptions<Settings> options, IMainRepository mainRepository, ILoggerService loggerService)
+        public FamiliesAppService(IBlobStorageService blobStorageService, IOptions<Settings> options, IMainRepository mainRepository, ILoggerService loggerService, IHistoryService historyService)
             : base(blobStorageService, options)
         {
             _mainRepository = mainRepository;
             _loggerService = loggerService;
+            _historyService = historyService;
         }
 
         public async Task<IEnumerable<MainDTO>> GetAllAsync(string? include = null)
@@ -74,10 +77,39 @@ namespace CestasDeMaria.Application.Services
             return main.ProjectedAs<MainDTO>();
         }
 
-        public async Task<MainDTO> UpdateAsync(MainDTO mainDto)
+        public async Task<MainDTO> UpdateAsync(long id, MainDTO mainDto)
         {
-            var main = mainDto.ProjectedAs<Main>();
+            var main = await _mainRepository.GetAsync(id);
+
+            if (main.Familystatusid != mainDto.Familystatusid)
+            {
+                await _loggerService.InsertAsync($"Alterando status da família {main.Id} pelo usuário {mainDto.Updatedby}", mainDto.Updatedby);
+
+                await _historyService.InsertAsync(new DTO.FamilyfamilystatushistoryDTO()
+                {
+                    Familyid = main.Id,
+                    Createdby = mainDto.Updatedby,
+                    Updatedby = mainDto.Updatedby,
+                    Newfamilystatusid = mainDto.Familystatusid,
+                    Oldfamilystatusid = main.Familystatusid,
+                });
+            }
+
+            main.Updatedby = mainDto.Updatedby;
             main.Updated = DateTime.UtcNow;
+            main.Document = Regex.Replace(mainDto.Document, @"\D", "");
+            main.Phone = Regex.Replace(mainDto.Phone, @"\D", "");
+            main.Housingsituation = mainDto.Housingsituation;
+            main.Children = mainDto.Children;
+            main.Address = mainDto.Address;
+            main.Neighborhood = mainDto.Neighborhood;
+            main.Adults = mainDto.Adults;
+            main.Basketquantity = mainDto.Basketquantity;
+            main.DeliveryWeek = mainDto.DeliveryWeek;
+            main.Familystatusid = mainDto.Familystatusid;
+            main.Hasseverelimitation = mainDto.Hasseverelimitation;
+            main.IsActive = mainDto.IsActive;
+            main.IsDeleted = mainDto.IsDeleted;
 
             _mainRepository.Update(main);
             await _mainRepository.CommitAsync();

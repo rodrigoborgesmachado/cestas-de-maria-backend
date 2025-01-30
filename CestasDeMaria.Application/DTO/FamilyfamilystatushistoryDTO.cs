@@ -7,5 +7,8 @@ namespace CestasDeMaria.Application.DTO
         public long Familyid { get; set; }
         public long Oldfamilystatusid { get; set; }
         public long Newfamilystatusid { get; set; }
+        public FamiliesDTO Families { get; set; }
+        public FamilystatusDTO NewFamilystatus { get; set; }
+        public FamilystatusDTO OldFamilystatus { get; set; }
     }
 }

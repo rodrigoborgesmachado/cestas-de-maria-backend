@@ -19,5 +19,7 @@ namespace CestasDeMaria.Application.DTO
         public long Familystatusid { get; set; }
         public int DeliveryWeek { get; set; }
         public FamilystatusDTO Familystatus { get; set; }
+        public AdminsDTO Admins { get; set; }
+        public IEnumerable<FamilyfamilystatushistoryDTO> Familyfamilystatushistory { get; set; }
     }
 }

@@ -66,16 +66,29 @@ namespace CestasDeMaria.Infrastructure.Data.Context
             .HasOne(sc => sc.Familystatus)
             .WithMany()
             .HasForeignKey(sc => new { sc.Familystatusid });
+            modelBuilder.Entity<Families>()
+            .HasOne(sc => sc.Admins)
+            .WithMany()
+            .HasForeignKey(sc => new { sc.Createdby });
+            modelBuilder.Entity<Families>()
+            .HasMany(sc => sc.Familyfamilystatushistory)
+            .WithOne(sc => sc.Families)
+            .HasForeignKey(sc => new { sc.Familyid });
 
             modelBuilder.Entity<Logger>()
             .HasOne(sc => sc.Admins)
             .WithMany()
             .HasForeignKey(sc => new { sc.Adminid });
 
-            //modelBuilder.Entity<User>()
-            //.HasMany(sc => sc.Customer)
-            //.WithOne(sc => sc.User)
-            //.HasForeignKey(sc => new { sc.UserId });
+            modelBuilder.Entity<Familyfamilystatushistory>()
+            .HasOne(sc => sc.NewFamilystatus)
+            .WithMany()
+            .HasForeignKey(sc => new { sc.Newfamilystatusid });
+            modelBuilder.Entity<Familyfamilystatushistory>()
+            .HasOne(sc => sc.OldFamilystatus)
+            .WithMany()
+            .HasForeignKey(sc => new { sc.Oldfamilystatusid });
+
 
             base.OnModelCreating(modelBuilder);
         }

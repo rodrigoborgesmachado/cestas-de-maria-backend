@@ -21,5 +21,6 @@ namespace CestasDeMaria.Domain.Entities
         public Familystatus Familystatus { get; set; }
         public Admins Admins { get; set; }
         public IEnumerable<Familyfamilystatushistory> Familyfamilystatushistory { get; set; }
+        public IEnumerable<Basketdeliveries> Basketdeliveries { get; set; }
     }
 }

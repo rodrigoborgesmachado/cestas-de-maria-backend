@@ -1,10 +1,11 @@
-using CestasDeMaria.Presentation.Api.Handler;
 using CestasDeMaria.Application.Helpers;
 using CestasDeMaria.Domain.ModelClasses;
+using CestasDeMaria.Presentation.Api.Handler;
 using CestasDeMaria.Presentation.Model.Returns;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Text.RegularExpressions;
 using IMainAppService = CestasDeMaria.Application.Interfaces.IFamiliesAppService;
 using MainDTO = CestasDeMaria.Application.DTO.FamiliesDTO;
 using MainViewModel = CestasDeMaria.Presentation.Model.ViewModels.FamiliesViewModel;
@@ -121,14 +122,17 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] MainViewModel model)
         {
-            var exists = await _mainAppService.GetByDocumentAsync(model.Document);
-            if(exists != null)
+            if(!string.IsNullOrEmpty(model.Document))
             {
-                return BadRequest(new
+                var exists = await _mainAppService.GetByDocumentAsync(Regex.Replace(model.Document, @"\D", ""));
+                if(exists != null)
                 {
-                    code = 401,
-                    message = "Família já existe!"
-                });
+                    return BadRequest(new
+                    {
+                        code = 401,
+                        message = "Família já existe!"
+                    });
+                }
             }
 
             var user = await tokenController.GetUserFromRequest();

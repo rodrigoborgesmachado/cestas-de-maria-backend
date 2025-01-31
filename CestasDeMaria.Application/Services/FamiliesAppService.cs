@@ -18,7 +18,7 @@ namespace CestasDeMaria.Application.Services
         private readonly ILoggerService _loggerService;
         private readonly IHistoryService _historyService;
 
-        private string[] allowInclude = new string[] { "Familystatus", "Familyfamilystatushistory", "Familyfamilystatushistory.NewFamilystatus", "Familyfamilystatushistory.OldFamilystatus", "Admins" };
+        private string[] allowInclude = new string[] { "Familystatus", "Familyfamilystatushistory", "Familyfamilystatushistory.NewFamilystatus", "Familyfamilystatushistory.OldFamilystatus", "Admins", "Basketdeliveries", "Basketdeliveries.Basketdeliverystatus" };
 
         public FamiliesAppService(IBlobStorageService blobStorageService, IOptions<Settings> options, IMainRepository mainRepository, ILoggerService loggerService, IHistoryService historyService)
             : base(blobStorageService, options)

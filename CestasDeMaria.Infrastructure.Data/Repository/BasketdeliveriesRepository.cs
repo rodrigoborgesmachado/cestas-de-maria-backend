@@ -38,7 +38,7 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             return await query.SingleOrDefaultAsync();
         }
 
-        public async Task<Tuple<int, IEnumerable<Main>>> GetAllPagedAsync(int page, int quantity, string isActive = null, string term = null, string orderBy = null, string[] include = null)
+        public async Task<Tuple<int, IEnumerable<Main>>> GetAllPagedAsync(int page, int quantity, DateTime? startDate, DateTime? endDate, string isActive = null, string term = null, string orderBy = null, string[] include = null)
         {
             var query = GetQueryable();
 
@@ -67,7 +67,16 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
             if (!string.IsNullOrEmpty(term))
             {
-                query = query.Where(c => c.Id.Equals(term));
+                query = query.Where(c => c.Families.Name.ToUpper().Contains(term.ToUpper()) || c.Families.Document.Contains(Regex.Replace(term, @"\D", "")));
+            }
+
+            if (startDate != null)
+            {
+                query = query.Where(o => o.Created >= startDate);
+            }
+            if (endDate != null)
+            {
+                query = query.Where(o => o.Created <= endDate);
             }
 
             var total = await GetAllPagedTotalAsync(query, include);

@@ -74,6 +74,10 @@ namespace CestasDeMaria.Infrastructure.Data.Context
             .HasMany(sc => sc.Familyfamilystatushistory)
             .WithOne(sc => sc.Families)
             .HasForeignKey(sc => new { sc.Familyid });
+            modelBuilder.Entity<Families>()
+            .HasMany(sc => sc.Basketdeliveries)
+            .WithOne(sc => sc.Families)
+            .HasForeignKey(sc => new { sc.Familyid });
 
             modelBuilder.Entity<Logger>()
             .HasOne(sc => sc.Admins)
@@ -89,6 +93,10 @@ namespace CestasDeMaria.Infrastructure.Data.Context
             .WithMany()
             .HasForeignKey(sc => new { sc.Oldfamilystatusid });
 
+            modelBuilder.Entity<Basketdeliveries>()
+            .HasOne(sc => sc.Basketdeliverystatus)
+            .WithMany()
+            .HasForeignKey(sc => new { sc.Deliverystatusid });
 
             base.OnModelCreating(modelBuilder);
         }
@@ -194,7 +202,9 @@ namespace CestasDeMaria.Infrastructure.Data.Context
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Property("Created").CurrentValue = dateNow;
+                        if(entry.Property("Created").CurrentValue == null || (DateTime)entry.Property("Created").CurrentValue == DateTime.MinValue)
+                            entry.Property("Created").CurrentValue = dateNow;
+
                         entry.Property("Updated").CurrentValue = dateNow;
                         entry.Property("IsActive").CurrentValue = (byte)1;
                         entry.Property("IsDeleted").CurrentValue = (byte)0;

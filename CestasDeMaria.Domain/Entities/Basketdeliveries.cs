@@ -7,5 +7,7 @@ namespace CestasDeMaria.Domain.Entities
         public long Familyid { get; set; }
         public long Deliverystatusid { get; set; }
         public int Weekofmonth { get; set; }
+        public Families Families { get; set; }
+        public Basketdeliverystatus Basketdeliverystatus { get; set; }
     }
 }

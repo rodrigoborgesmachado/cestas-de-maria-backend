@@ -19,7 +19,8 @@ namespace CestasDeMaria.Presentation.Model.ViewModels
         public long? Familystatusid { get; set; }
         public int DeliveryWeek { get; set; }
         public FamilystatusViewModel? Familystatus { get; set; }
-        public AdminsViewModel Admins { get; set; }
+        public AdminsViewModel? Admins { get; set; }
         public IEnumerable<FamilyfamilystatushistoryViewModel>? Familyfamilystatushistory { get; set; }
+        public IEnumerable<BasketdeliveriesViewModel>? Basketdeliveries { get; set; }
     }
 }

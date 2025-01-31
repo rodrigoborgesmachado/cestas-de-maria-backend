@@ -7,5 +7,7 @@ namespace CestasDeMaria.Application.DTO
         public long Familyid { get; set; }
         public long Deliverystatusid { get; set; }
         public int Weekofmonth { get; set; }
+        public FamiliesDTO Families { get; set; }
+        public BasketdeliverystatusDTO Basketdeliverystatus { get; set; }
     }
 }

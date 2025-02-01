@@ -42,6 +42,12 @@ namespace CestasDeMaria.Application.Services
             return result.ProjectedAs<MainDTO>();
         }
 
+        public async Task<IEnumerable<MainDTO>> GetByFamilyAsync(long code, string? include = null)
+        {
+            var result = await _mainRepository.GetByFamilyAsync(code, IncludesMethods.GetIncludes(include, allowInclude));
+            return result.ProjectedAsCollection<MainDTO>();
+        }
+
         public async Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, string isActive = null, string term = null, string orderBy = null, string? include = null)
         {
             var tuple = await _mainRepository.GetAllPagedAsync(page, quantity, isActive, term, orderBy, IncludesMethods.GetIncludes(include, allowInclude));

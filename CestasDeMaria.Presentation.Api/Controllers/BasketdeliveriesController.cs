@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using IMainAppService = CestasDeMaria.Application.Interfaces.IBasketdeliveriesAppService;
 using MainDTO = CestasDeMaria.Application.DTO.BasketdeliveriesDTO;
 using MainViewModel = CestasDeMaria.Presentation.Model.ViewModels.BasketdeliveriesViewModel;
+using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
 
 namespace CestasDeMaria.Presentation.Api.Controllers
 {
@@ -60,6 +61,21 @@ namespace CestasDeMaria.Presentation.Api.Controllers
             var mainDto = await _mainAppService.GetAsync(code, include);
 
             return Ok(mainDto.ProjectedAs<MainViewModel>());
+        }
+
+        /// <summary>
+        /// Get by code
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="include"></param>
+        /// <returns><![CDATA[Task<MainViewModel>]]></returns>
+        [HttpGet("GetByDate")]
+        public async Task<IActionResult> GetByDate(DateTime date, string? include = null)
+        {
+            var user = await tokenController.GetUserFromRequest();
+            var mainDto = await _mainAppService.GetAndGenerateWeeklyBasketDeliveriesAsync(date, user.id);
+
+            return Ok(mainDto.ProjectedAsCollection<MainViewModel>());
         }
 
         /// <summary>
@@ -132,6 +148,48 @@ namespace CestasDeMaria.Presentation.Api.Controllers
             var result = await _mainAppService.InsertAsync(mainDto);
 
             return Ok(result);
+        }
+
+        /// <summary>
+		/// Insert new
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns><![CDATA[Task<IActionResult>]]></returns>
+        [HttpPost("update-status/{id}")]
+        public async Task<IActionResult> UpdateStatus(long id, [FromQuery]DeliveryStatus status)
+        {
+            var user = await tokenController.GetUserFromRequest();
+
+            try
+            {
+                var result = await _mainAppService.UpdateStatus(id, user, status);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
+		/// Insert new
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns><![CDATA[Task<IActionResult>]]></returns>
+        [HttpPost("update-family/{id}/{newFamilyId}/{oldFamilyId}")]
+        public async Task<IActionResult> UpdateFamily(long id, long newFamilyId, long oldFamilyId)
+        {
+            var user = await tokenController.GetUserFromRequest();
+
+            try
+            {
+                var result = await _mainAppService.UpdateFamily(id, newFamilyId, oldFamilyId, user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>

@@ -23,6 +23,22 @@ namespace CestasDeMaria.Infrastructure.CrossCutting.Enums
             Wellcome,
         }
 
+        public enum DeliveryStatus
+        {
+            SOLICITAR = 1,
+            SOLICITADO = 2,
+            ENTREGUE = 3,
+            FALTOU = 4
+        }
+
+        public enum FamilyStatus
+        {
+            CORTADO = 1,
+            EMESPERA = 2,
+            EMATENDIMENTO = 3,
+            ELEGIVEL = 4
+        }
+
         public static string GetDescription(this Enum value)
         {
             FieldInfo field = value.GetType().GetField(value.ToString());

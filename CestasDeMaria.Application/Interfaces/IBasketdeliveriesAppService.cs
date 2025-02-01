@@ -1,3 +1,6 @@
+using CestasDeMaria.Domain.ModelClasses;
+using CestasDeMaria.Infrastructure.CrossCutting.Mail;
+using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
 using MainDTO = CestasDeMaria.Application.DTO.BasketdeliveriesDTO;
 
 namespace CestasDeMaria.Application.Interfaces
@@ -17,5 +20,10 @@ namespace CestasDeMaria.Application.Interfaces
         Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, DateTime? startDate, DateTime? endDate, string isActive = null, string term = null, string orderBy = null, string? include = null);
 
         Task<string> GetReport(int quantityMax, string isActive = null, string term = null, string orderBy = null, string? include = null);
+        Task<IEnumerable<MainDTO>> GetAndGenerateWeeklyBasketDeliveriesAsync(DateTime date, long user);
+
+        Task<MainDTO> UpdateStatus(long id, UserInfo user, DeliveryStatus status);
+
+        Task<MainDTO> UpdateFamily(long id, long newFamilyId, long oldFamilyId, UserInfo user);
     }
 }

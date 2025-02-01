@@ -1,3 +1,4 @@
+using CestasDeMaria.Infrastructure.CrossCutting.Enums;
 using MainDTO = CestasDeMaria.Application.DTO.FamiliesDTO;
 
 namespace CestasDeMaria.Application.Interfaces
@@ -16,7 +17,7 @@ namespace CestasDeMaria.Application.Interfaces
 
         Task<MainDTO> RemoveAsync(MainDTO mainDto);
 
-        Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, string isActive = null, string term = null, string orderBy = null, string? include = null);
+        Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, Enums.FamilyStatus? status, string isActive = null, string term = null, string orderBy = null, string? include = null);
 
         Task<string> GetReport(int quantityMax, string isActive = null, string term = null, string orderBy = null, string? include = null);
     }

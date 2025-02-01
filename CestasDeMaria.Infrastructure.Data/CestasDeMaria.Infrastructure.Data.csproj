@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CestasDeMaria.Domain\CestasDeMaria.Domain.csproj" />
     <ProjectReference Include="..\CestasDeMaria.Domain\CestasDeMaria.Domain.csproj" />
+    <ProjectReference Include="..\CestasDeMaria.Infrastructure.CrossCutting\CestasDeMaria.Infrastructure.CrossCutting.csproj" />
   </ItemGroup>
 
 </Project>

@@ -38,6 +38,21 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             return await query.SingleOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<Main>> GetByFamilyAsync(long code, string[] include = null)
+        {
+            var query = GetQueryable().Where(p => p.Familyid.Equals(code));
+
+            if (include != null)
+            {
+                foreach (var toInclude in include)
+                {
+                    query = query.Include(toInclude);
+                }
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task<Tuple<int, IEnumerable<Main>>> GetAllPagedAsync(int page, int quantity, string isActive = null, string term = null, string orderBy = null, string[] include = null)
         {
             var query = GetQueryable();

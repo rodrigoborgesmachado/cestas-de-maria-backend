@@ -3,6 +3,7 @@ using CestasDeMaria.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.IFamiliesRepository;
+using CestasDeMaria.Infrastructure.CrossCutting.Enums;
 
 namespace CestasDeMaria.Infrastructure.Data.Repository
 {
@@ -53,7 +54,52 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             return await query.SingleOrDefaultAsync();
         }
 
-        public async Task<Tuple<int, IEnumerable<Main>>> GetAllPagedAsync(int page, int quantity, string isActive = null, string term = null, string orderBy = null, string[] include = null)
+        public async Task<IEnumerable<Main>> GetEligibleFamiliesAsync(int weekNumber, string[] include = null)
+        {
+            var query = GetQueryable().Where(p => p.DeliveryWeek.Equals(weekNumber) && p.Familystatusid.Equals(4)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
+
+            if (include != null)
+            {
+                foreach (var toInclude in include)
+                {
+                    query = query.Include(toInclude);
+                }
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Main>> GetInProgressFamiliesAsync(int weekNumber, string[] include = null)
+        {
+            var query = GetQueryable().Where(p => p.DeliveryWeek.Equals(weekNumber) && p.Familystatusid.Equals(3)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
+
+            if (include != null)
+            {
+                foreach (var toInclude in include)
+                {
+                    query = query.Include(toInclude);
+                }
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Main>> GetWaitingFamiliesAsync(string[] include = null)
+        {
+            var query = GetQueryable().Where(p => p.Familystatusid.Equals(2)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
+
+            if (include != null)
+            {
+                foreach (var toInclude in include)
+                {
+                    query = query.Include(toInclude);
+                }
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<Tuple<int, IEnumerable<Main>>> GetAllPagedAsync(int page, int quantity, Enums.FamilyStatus? status, string isActive = null, string term = null, string orderBy = null, string[] include = null)
         {
             var query = GetQueryable();
 
@@ -83,6 +129,11 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             if (!string.IsNullOrEmpty(term))
             {
                 query = query.Where(c => c.Name.ToUpper().Contains(term.ToUpper()) || c.Document.ToUpper().Contains(term.ToUpper()));
+            }
+
+            if(status != null)
+            {
+                query = query.Where(f => f.Familystatusid.Equals(Enums.GetValue(status)));
             }
 
             var total = await GetAllPagedTotalAsync(query, include);

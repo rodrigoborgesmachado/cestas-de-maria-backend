@@ -66,9 +66,12 @@ namespace CestasDeMaria.Application.Services
         public async Task<MainDTO> InsertAsync(MainDTO mainDto)
         {
             var main = mainDto.ProjectedAs<Main>();
+            
+            main.Passwordhash = "12345";
+            main.Guid = Guid.NewGuid().ToString();
 
             _mainRepository.Add(main);
-            await _mailMessageService.SendMail(main.Username, new string[] { _settings.PortalUrl, main.Name }, Infrastructure.CrossCutting.Enums.Enums.EmailType.Wellcome);
+            await _mailMessageService.SendMail(main.Username, new string[] { $"{_settings.PortalUrl}/confirma?token={main.Guid}", main.Name }, Infrastructure.CrossCutting.Enums.Enums.EmailType.Wellcome);
 
             await _mainRepository.CommitAsync();
 
@@ -98,8 +101,29 @@ namespace CestasDeMaria.Application.Services
             await _loggerService.InsertAsync($"Ativando usuário {main.Username}", user);
 
             main.Updated = DateTime.UtcNow;
-            main.IsDeleted = 1;
-            main.IsActive = 0;
+            main.IsDeleted = 0;
+            main.IsActive = 1;
+
+            _mainRepository.Update(main);
+            await _mainRepository.CommitAsync();
+
+            return main.ProjectedAs<MainDTO>();
+        }
+
+        public async Task<MainDTO> ConfirmUser(string password, string guid)
+        {
+            var main = await _mainRepository.GetByGuidAsync(guid);
+
+            if(main == null)
+            {
+                return null;
+            }
+
+            main.Updated = DateTime.UtcNow;
+            main.IsDeleted = 0;
+            main.IsActive = 1;
+            main.Guid = string.Empty;
+            main.Passwordhash = password;
 
             _mainRepository.Update(main);
             await _mainRepository.CommitAsync();

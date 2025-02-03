@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using IMainAppService = CestasDeMaria.Application.Interfaces.IAdminsAppService;
 using MainDTO = CestasDeMaria.Application.DTO.AdminsDTO;
 using MainViewModel = CestasDeMaria.Presentation.Model.ViewModels.AdminsViewModel;
+using CestasDeMaria.Presentation.Model.Requests;
 
 namespace CestasDeMaria.Presentation.Api.Controllers
 {
@@ -130,6 +131,25 @@ namespace CestasDeMaria.Presentation.Api.Controllers
             }
 
             var result = await _mainAppService.InsertAsync(mainDto);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+		/// Insert new
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns><![CDATA[Task<IActionResult>]]></returns>
+        [HttpPost("confirm-user")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmUser([FromBody] ConfirmUserRequest model)
+        {
+            if (model.Password != model.VerifyPassword)
+            {
+                return BadRequest("Senha precisa ser igual!");
+            }
+
+            var result = await _mainAppService.ConfirmUser(model.Password, model.Guid);
 
             return Ok(result);
         }

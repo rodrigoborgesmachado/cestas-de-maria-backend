@@ -4,6 +4,7 @@ namespace CestasDeMaria.Domain.Entities
     {
         public string Username { get; set; }
         public string Name { get; set; }
-        public string Passwordhash { get; set; }
+        public string? Passwordhash { get; set; }
+        public string? Guid { get; set; }
     }
 }

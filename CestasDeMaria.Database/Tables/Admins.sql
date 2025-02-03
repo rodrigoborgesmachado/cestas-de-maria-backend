@@ -8,6 +8,7 @@
 	[Username] VARCHAR(50) NOT NULL UNIQUE,
 	[Name] VARCHAR(50) NOT NULL,
 	[PasswordHash] VARCHAR(255) NOT NULL,
+	[Guid] varchar(255),
 PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

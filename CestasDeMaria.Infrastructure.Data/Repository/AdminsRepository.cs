@@ -38,6 +38,21 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             return await query.SingleOrDefaultAsync();
         }
 
+        public async Task<Main> GetByGuidAsync(string guid, string[] include = null)
+        {
+            var query = GetQueryable().Where(p => p.Guid.Equals(guid));
+
+            if (include != null)
+            {
+                foreach (var toInclude in include)
+                {
+                    query = query.Include(toInclude);
+                }
+            }
+
+            return await query.SingleOrDefaultAsync();
+        }
+
         public async Task<Main> GetByUsernameAsync(string username, string[] include = null)
         {
             var query = GetQueryable().Where(p => p.Username.Equals(username));

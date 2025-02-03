@@ -12,6 +12,7 @@ using CestasDeMaria.Application.Helpers;
 using System.Globalization;
 using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
 using CestasDeMaria.Infrastructure.CrossCutting.Enums;
+using CestasDeMaria.Application.DTO;
 
 namespace CestasDeMaria.Application.Services
 {
@@ -184,8 +185,8 @@ namespace CestasDeMaria.Application.Services
                 if (history != null && history.Count() >= 3)
                 {
                     bool needToDelete = history
-                        .OrderByDescending(p => p.Created) // Ensure latest entries are considered
-                        .Take(3) // Get the last 3 elements
+                        .OrderByDescending(p => p.Created) 
+                        .Take(3) 
                         .All(p => p.Newfamilystatusid.Equals(Enums.GetValue(DeliveryStatus.FALTOU)));
 
                     if (needToDelete)
@@ -339,6 +340,11 @@ namespace CestasDeMaria.Application.Services
             return result.ProjectedAsCollection<MainDTO>();
         }
 
+        public async Task<DashboardStatisticsDTO> GetDashboardStatisticsAsync(DateTime startDate, DateTime endDate)
+        {
+            var statistics = await _mainRepository.GetDashboardStatisticsAsync(startDate, endDate);
+            return statistics.ProjectedAs<DashboardStatisticsDTO>();
+        }
 
         public void Dispose()
         {

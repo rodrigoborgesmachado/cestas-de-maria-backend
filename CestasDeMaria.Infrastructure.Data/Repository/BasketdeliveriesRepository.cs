@@ -3,6 +3,9 @@ using CestasDeMaria.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.IBasketdeliveriesRepository;
+using CestasDeMaria.Domain.Entities;
+using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
+using CestasDeMaria.Infrastructure.CrossCutting.Enums;
 
 namespace CestasDeMaria.Infrastructure.Data.Repository
 {
@@ -86,9 +89,14 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
             if (!string.IsNullOrEmpty(term))
             {
-                query = query.Where(c => c.Families.Name.ToUpper().Contains(term.ToUpper()) || c.Families.Document.Contains(Regex.Replace(term, @"\D", "")));
+                query = query.Where(c => c.Families.Name.ToUpper().Contains(term.ToUpper()));
+                
+                if (!string.IsNullOrEmpty(Regex.Replace(term, @"\D", "")))
+                {
+                    query = query.Where(c => c.Families.Document.Contains(Regex.Replace(term, @"\D", "")));
+                }
             }
-
+            
             if (startDate != null)
             {
                 query = query.Where(o => o.Created >= startDate);
@@ -102,6 +110,52 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             var list = await GetAllPagedAsync(query, page, quantity, include, orderBy);
 
             return Tuple.Create(total, list);
+        }
+
+        public async Task<DashboardStatistics> GetDashboardStatisticsAsync(DateTime startDate, DateTime endDate)
+        {
+            var families = await _currentContext.Families
+                .GroupBy(f => f.Familystatusid)
+                .Select(g => new { StatusId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var deliveries = await _currentContext.Basketdeliveries
+                .GroupBy(b => b.Deliverystatusid)
+                .Select(g => new { StatusId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            var deliveriesByWeekday = await _currentContext.Basketdeliveries
+                .Where(b => b.Created >= startDate && b.Created <= endDate &&
+                            b.Deliverystatusid.Equals(Enums.GetValue(DeliveryStatus.ENTREGUE)))
+                .Join(_currentContext.Families,
+                      b => b.Familyid,
+                      f => f.Id,
+                      (b, f) => new { b.Weekofmonth, f.Basketquantity }) // Get week and basket quantity
+                .GroupBy(x => x.Weekofmonth)
+                .Select(g => new
+                {
+                    Weekday = g.Key,
+                    Count = g.Sum(x => x.Basketquantity) // Multiply by basket quantity
+                })
+                .ToListAsync();
+
+            return new DashboardStatistics
+            {
+                QuantityFamilyInProgress = families.FirstOrDefault(f => f.StatusId == Enums.GetValue(FamilyStatus.EMATENDIMENTO))?.Count ?? 0,
+                QuantityFamilyCutted = families.FirstOrDefault(f => f.StatusId == Enums.GetValue(FamilyStatus.CORTADO))?.Count ?? 0,
+                QuantityFamilyEligible = families.FirstOrDefault(f => f.StatusId == Enums.GetValue(FamilyStatus.ELEGIVEL))?.Count ?? 0,
+                QuantityFamilyWaiting = families.FirstOrDefault(f => f.StatusId == Enums.GetValue(FamilyStatus.EMESPERA))?.Count ?? 0,
+
+                QuantityDeliveryPending = deliveries.FirstOrDefault(d => d.StatusId == Enums.GetValue(DeliveryStatus.SOLICITAR))?.Count ?? 0,
+                QuantityDeliveryCompleted = deliveries.FirstOrDefault(d => d.StatusId == Enums.GetValue(DeliveryStatus.ENTREGUE))?.Count ?? 0,
+                QuantityDeliveryMissed = deliveries.FirstOrDefault(d => d.StatusId == Enums.GetValue(DeliveryStatus.FALTOU))?.Count ?? 0,
+                QuantityDeliveryCalled = deliveries.FirstOrDefault(d => d.StatusId == Enums.GetValue(DeliveryStatus.SOLICITADO))?.Count ?? 0,
+
+                QuantityDeliveriesPerWeekday = deliveriesByWeekday.OrderBy(d => d.Weekday).ToDictionary(
+                    d => d.Weekday.ToString(),
+                    d => d.Count
+                )
+            };
         }
     }
 }

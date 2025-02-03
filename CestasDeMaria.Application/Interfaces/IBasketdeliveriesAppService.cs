@@ -1,3 +1,4 @@
+using CestasDeMaria.Application.DTO;
 using CestasDeMaria.Domain.ModelClasses;
 using CestasDeMaria.Infrastructure.CrossCutting.Mail;
 using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
@@ -25,5 +26,7 @@ namespace CestasDeMaria.Application.Interfaces
         Task<MainDTO> UpdateStatus(long id, UserInfo user, DeliveryStatus status);
 
         Task<MainDTO> UpdateFamily(long id, long newFamilyId, long oldFamilyId, UserInfo user);
+
+        Task<DashboardStatisticsDTO> GetDashboardStatisticsAsync(DateTime startDate, DateTime endDate);
     }
 }

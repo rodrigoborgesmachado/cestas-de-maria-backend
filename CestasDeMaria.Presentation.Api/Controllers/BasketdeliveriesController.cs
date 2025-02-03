@@ -9,6 +9,7 @@ using IMainAppService = CestasDeMaria.Application.Interfaces.IBasketdeliveriesAp
 using MainDTO = CestasDeMaria.Application.DTO.BasketdeliveriesDTO;
 using MainViewModel = CestasDeMaria.Presentation.Model.ViewModels.BasketdeliveriesViewModel;
 using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
+using CestasDeMaria.Presentation.Model.ViewModels;
 
 namespace CestasDeMaria.Presentation.Api.Controllers
 {
@@ -218,6 +219,26 @@ namespace CestasDeMaria.Presentation.Api.Controllers
             var result = await _mainAppService.RemoveAsync(mainDto);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Método que busca os dados do dashboard
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        [HttpGet("dashboard-statistics")]
+        public async Task<IActionResult> GetDashboardStatistics([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            if (startDate == default || endDate == default)
+            {
+                return BadRequest("Start date and end date are required.");
+            }
+
+            var statistics = await _mainAppService.GetDashboardStatisticsAsync(startDate, endDate);
+            var viewModel = statistics.ProjectedAs<DashboardStatisticsViewModel>();
+
+            return Ok(viewModel);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using CestasDeMaria.Application.Helpers;
+using CestasDeMaria.Domain.Interfaces.Services;
 using CestasDeMaria.Domain.ModelClasses;
 using Microsoft.Extensions.Options;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.ILoggerRepository;
@@ -8,13 +9,14 @@ using MainDTO = CestasDeMaria.Application.DTO.LoggerDTO;
 
 namespace CestasDeMaria.Application.Services
 {
-    public class LoggerAppService : IMainService
+    public class LoggerAppService : ServiceBase<MainDTO>, IMainService
     {
         private readonly IMainRepository _mainRepository;
         private readonly Settings _settings;
         private string[] allowInclude = new string[] { "Admins" };
 
-        public LoggerAppService(IMainRepository mainRepository, IOptions<Settings> options)
+        public LoggerAppService(IBlobStorageService blobStorageService, IMainRepository mainRepository, IOptions<Settings> options)
+            : base(blobStorageService, options)
         {
             _mainRepository = mainRepository;
             _settings = options.Value;
@@ -51,9 +53,9 @@ namespace CestasDeMaria.Application.Services
             return result.ProjectedAs<MainDTO>();
         }
 
-        public async Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, string filtro = "", string orderby = "", string include = "")
+        public async Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, DateTime? startDate, DateTime? endDate, string filtro = "", string orderby = "", string include = "")
         {
-            var tuple = await _mainRepository.GetAllPagedAsync(page, quantity, filtro, orderby: orderby, include: IncludesMethods.GetIncludes(include, allowInclude));
+            var tuple = await _mainRepository.GetAllPagedAsync(page, quantity, startDate, endDate, filtro, orderby: orderby, include: IncludesMethods.GetIncludes(include, allowInclude));
             var total = tuple.Item1;
             var pages = (int)Math.Ceiling((double)total / quantity);
 
@@ -97,6 +99,17 @@ namespace CestasDeMaria.Application.Services
             //}
 
             return Tuple.Create(total, pages, list);
+        }
+
+        public async Task<string> GetReport(int quantityMax, DateTime? startDate, DateTime? endDate, string isActive = null, string term = null, string orderBy = null, string? include = null)
+        {
+            await InsertAsync($"Report - Starting GetReport - {this.GetType().Name}");
+
+            var result = await GetAllPagedAsync(1, quantityMax == 0 ? int.MaxValue : quantityMax, startDate, endDate, term, orderBy, include);
+            string link = await UploadReport(result.Item3.ToList());
+
+            await InsertAsync($"Report - Finishing GetReport - {this.GetType().Name}");
+            return link;
         }
 
         public void Dispose()

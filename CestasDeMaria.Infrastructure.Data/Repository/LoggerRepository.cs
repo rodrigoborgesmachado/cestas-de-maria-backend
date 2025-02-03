@@ -60,7 +60,7 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             }
         }
 
-        public async Task<Tuple<int, IEnumerable<Main>>> GetAllPagedAsync(int page, int quantity, string term, string orderby, string[] include)
+        public async Task<Tuple<int, IEnumerable<Main>>> GetAllPagedAsync(int page, int quantity, DateTime? startDate, DateTime? endDate, string term, string orderby, string[] include)
         {
             try
             {
@@ -69,6 +69,15 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
                 if (!string.IsNullOrEmpty(term))
                 {
                     query = query.Where(p => p.Message.Contains(term));
+                }
+
+                if (startDate != null)
+                {
+                    query = query.Where(o => o.Created >= startDate);
+                }
+                if (endDate != null)
+                {
+                    query = query.Where(o => o.Created <= endDate);
                 }
 
                 var total = await GetAllPagedTotalAsync(query, include);

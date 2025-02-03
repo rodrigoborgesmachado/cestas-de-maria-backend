@@ -45,9 +45,9 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         /// <param name="include"></param>
         /// <returns><![CDATA[Task<PaggedBaseReturn<MainViewModel>>]]></returns>
         [HttpGet("pagged")]
-        public async Task<IActionResult> GetPagged(int page, int quantity, string term = null, string orderBy = null, string? include = null)
+        public async Task<IActionResult> GetPagged(int page, int quantity, DateTime? startDate, DateTime? endDate, string term = null, string orderBy = null, string? include = null)
         {
-            var result = await _mainAppService.GetAllPagedAsync(page, quantity, term, orderBy, include);
+            var result = await _mainAppService.GetAllPagedAsync(page, quantity, startDate, endDate, term, orderBy, include);
 
             var list = result.Item3.ProjectedAsCollection<MainViewModel>();
 
@@ -100,6 +100,28 @@ namespace CestasDeMaria.Presentation.Api.Controllers
             var result = await _mainAppService.InsertAsync(texto);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// List paged
+        /// </summary>
+        /// <param name="quantityMax"></param>
+        /// <param name="isActive"></param>
+        /// <param name="term"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="include"></param>
+        /// <returns><![CDATA[Task<PaggedBaseReturn<MainViewModel>>]]></returns>
+        [HttpGet("export")]
+        public async Task<IActionResult> Export(int quantityMax, DateTime? startDate, DateTime? endDate, string isActive = null, string term = null, string orderBy = null, string? include = null)
+        {
+            var result = await _mainAppService.GetReport(quantityMax, startDate, endDate, isActive, term, orderBy: orderBy, include: include);
+
+            return Ok(new BaseReturn<string>
+            {
+                Message = "Report created",
+                Status = 200,
+                Object = result
+            });
         }
 
         /// <summary>

@@ -38,7 +38,7 @@ namespace CestasDeMaria.Infrastructure.CrossCutting.IoC
             #region Sevice
 
             //RegisterService<IViaCepService, ViaCepService>(services);
-            RegisterService<IBlobStorageService, BlobStorageS3Service>(services);
+            RegisterService<IBlobStorageService, BlobAzureStorageService>(services);
             RegisterService<ISendGridService, SendGridService>(services);
 
             #endregion

@@ -20,7 +20,8 @@ namespace CestasDeMaria.Application.Interfaces
 
         Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, DateTime? startDate, DateTime? endDate, string isActive = null, string term = null, string orderBy = null, string? include = null);
 
-        Task<string> GetReport(int quantityMax, string isActive = null, string term = null, string orderBy = null, string? include = null);
+        Task<string> GetReport(int quantityMax, DateTime? startDate, DateTime? endDate, string isActive = null, string term = null, string orderBy = null, string? include = null);
+
         Task<IEnumerable<MainDTO>> GetAndGenerateWeeklyBasketDeliveriesAsync(DateTime date, long user);
 
         Task<MainDTO> UpdateStatus(long id, UserInfo user, DeliveryStatus status);

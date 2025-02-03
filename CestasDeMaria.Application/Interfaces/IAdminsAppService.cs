@@ -25,5 +25,7 @@ namespace CestasDeMaria.Application.Interfaces
         Task<MainDTO> ActiveUserAsync(long id, long user);
 
         Task<MainDTO> ConfirmUser(string password, string guid);
+
+        Task<bool> RecoverPassword(string email);
     }
 }

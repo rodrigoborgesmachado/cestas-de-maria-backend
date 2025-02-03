@@ -131,6 +131,25 @@ namespace CestasDeMaria.Application.Services
             return main.ProjectedAs<MainDTO>();
         }
 
+        public async Task<bool> RecoverPassword(string email)
+        {
+            var main = await _mainRepository.GetByUsernameAsync(email);
+
+            if (main == null)
+            {
+                return false;
+            }
+
+            main.Guid = Guid.NewGuid().ToString();
+            main.Updated = DateTime.Now;
+            _mainRepository.Update(main);
+            await _mainRepository.CommitAsync();
+
+            await _mailMessageService.SendMail(main.Username, new string[] { $"{_settings.PortalUrl}/recover?token={main.Guid}", main.Name }, Infrastructure.CrossCutting.Enums.Enums.EmailType.RecoveryPassword);
+
+            return true;
+        }
+
         public async Task<MainDTO> UpdateAsync(MainDTO mainDto)
         {
             var main = mainDto.ProjectedAs<Main>();

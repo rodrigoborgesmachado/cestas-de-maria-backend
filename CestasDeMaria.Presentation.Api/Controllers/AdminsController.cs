@@ -155,6 +155,20 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         }
 
         /// <summary>
+		/// Insert new
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns><![CDATA[Task<IActionResult>]]></returns>
+        [HttpGet("recover-pass-user")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RecoverPasswordUser(string email)
+        {
+            var result = await _mainAppService.RecoverPassword(email);
+
+            return Ok(result);
+        }
+
+        /// <summary>
 		/// Update
 		/// </summary>
 		/// <param name="model"></param>

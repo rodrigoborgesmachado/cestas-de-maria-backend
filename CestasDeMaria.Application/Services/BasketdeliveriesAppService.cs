@@ -13,6 +13,12 @@ using System.Globalization;
 using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
 using CestasDeMaria.Infrastructure.CrossCutting.Enums;
 using CestasDeMaria.Application.DTO;
+using System.Diagnostics;
+using CsvHelper;
+using CestasDeMaria.Domain.Entities;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Drawing;
 
 namespace CestasDeMaria.Application.Services
 {
@@ -345,6 +351,162 @@ namespace CestasDeMaria.Application.Services
             var statistics = await _mainRepository.GetDashboardStatisticsAsync(startDate, endDate);
             return statistics.ProjectedAs<DashboardStatisticsDTO>();
         }
+
+        public async Task<string> GetFullReport()
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            await _loggerService.InsertAsync($"Report - Starting GetReport - {this.GetType().Name}");
+
+            var families = await _familiesRepository.GetAllAsync(new string[] { "Familystatus" });
+            var deliveries = await _mainRepository.GetAllAsync(IncludesMethods.GetIncludes("Basketdeliverystatus", allowInclude));
+
+            int unixTimestamp = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+
+            // Generate Excel file
+            byte[] bytes = GenerateExcelReport(families, deliveries);
+
+            string fileName = $"FullReport${unixTimestamp}.xlsx";
+            var link = await _iBlobStorageService.UploadFileAsync(bytes, fileName);
+
+            stopWatch.Stop();
+            await _loggerService.InsertAsync($"Report - Finishing GetReport - {this.GetType().Name} in {ElapsedTime(stopWatch)}");
+
+            return link;
+        }
+
+        private string ElapsedTime(Stopwatch stopWatch)
+        {
+            return string.Format("{0:00}:{1:00}:{2:00}:{3:00}", stopWatch.Elapsed.Hours, stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds, stopWatch.Elapsed.Milliseconds / 10);
+        }
+
+        private byte[] GenerateExcelReport(IEnumerable<Families> families, IEnumerable<Basketdeliveries> deliveries)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Families Report");
+
+                worksheet.Cells[1, 1].Value = "Nome da Família";
+                worksheet.Cells[1, 2].Value = "Telefone";
+                worksheet.Cells[1, 3].Value = "Documento";
+                worksheet.Cells[1, 4].Value = "Adultos";
+                worksheet.Cells[1, 5].Value = "Crianças";
+                worksheet.Cells[1, 6].Value = "Quantidade de Cestas";
+                worksheet.Cells[1, 7].Value = "Situação da Moradia";
+                worksheet.Cells[1, 8].Value = "Bairro";
+                worksheet.Cells[1, 9].Value = "Endereço";
+                worksheet.Cells[1, 10].Value = "Status da Família";
+                worksheet.Cells[1, 11].Value = "Último Status de Entrega";
+                worksheet.Cells[1, 12].Value = "Última Data de Entrega";
+
+                var saturdays = deliveries
+                                .Select(d => GetSaturdayOfWeek(d.Created.Year, d.Weekofmonth))
+                                .Distinct()
+                                .OrderBy(d => d)
+                                .ToList();
+
+
+                int columnIndex = 13;
+                var saturdayColumns = new Dictionary<DateTime, int>();
+
+                foreach (var saturday in saturdays)
+                {
+                    worksheet.Cells[1, columnIndex].Value = saturday.ToString("yyyy-MM-dd");
+                    worksheet.Cells[1, columnIndex].Style.Font.Bold = true;
+                    worksheet.Column(columnIndex).AutoFit();
+                    saturdayColumns[saturday] = columnIndex;
+                    columnIndex++;
+                }
+
+                using (var headerRange = worksheet.Cells[1, 1, 1, 12])
+                {
+                    headerRange.Style.Font.Bold = true;
+                    headerRange.AutoFitColumns();
+                }
+
+                int row = 2;
+                foreach (var family in families)
+                {
+                    var lastDelivery = deliveries
+                        .Where(d => d.Familyid == family.Id)
+                        .OrderByDescending(d => d.Created)
+                        .FirstOrDefault();
+
+                    worksheet.Cells[row, 1].Value = family.Name;
+                    worksheet.Cells[row, 2].Value = family.Phone;
+                    worksheet.Cells[row, 3].Value = family.Document;
+                    worksheet.Cells[row, 4].Value = family.Adults;
+                    worksheet.Cells[row, 5].Value = family.Children;
+                    worksheet.Cells[row, 6].Value = family.Basketquantity;
+                    worksheet.Cells[row, 7].Value = family.Housingsituation.ToUpper();
+                    worksheet.Cells[row, 8].Value = family.Neighborhood;
+                    worksheet.Cells[row, 9].Value = family.Address;
+                    worksheet.Cells[row, 10].Value = family.Familystatus?.Description ?? "Unknown";
+                    worksheet.Cells[row, 11].Value = lastDelivery?.Basketdeliverystatus?.Description ?? "No Deliveries";
+                    worksheet.Cells[row, 12].Value = lastDelivery?.Created.ToString("yyyy-MM-dd") ?? "N/A";
+
+                    var familyDeliveries = deliveries.Where(d => d.Familyid == family.Id);
+                    foreach (var delivery in familyDeliveries)
+                    {
+                        if (saturdayColumns.TryGetValue(delivery.Created.Date, out int col))
+                        {
+                            var status = delivery.Basketdeliverystatus?.Id;
+                            worksheet.Cells[row, col].Value = status == Enums.GetValue(DeliveryStatus.ENTREGUE) ? "OK" : 
+                                                            (status == Enums.GetValue(DeliveryStatus.FALTOU) ? "FALTOU" :
+                                                            status == Enums.GetValue(DeliveryStatus.SOLICITADO) ? "SOLICITADO" : "");
+                        }
+                    }
+
+                    Color rowColor = GetRowColor(family);
+                    using (var range = worksheet.Cells[row, 1, row, 12]) // Apply color to full row
+                    {
+                        range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(rowColor);
+                    }
+
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+                return package.GetAsByteArray();
+            }
+        }
+
+        private DateTime GetSaturdayOfWeek(int year, int weekNumber)
+        {
+            DateTime firstDayOfYear = new DateTime(year, 1, 1);
+
+            // Get the first Saturday of the year
+            int daysUntilFirstSaturday = ((int)DayOfWeek.Saturday - (int)firstDayOfYear.DayOfWeek + 7) % 7;
+            DateTime firstSaturday = firstDayOfYear.AddDays(daysUntilFirstSaturday);
+
+            // Get the Saturday of the given week
+            return firstSaturday.AddDays((weekNumber - 1) * 7);
+        }
+
+        private Color GetRowColor(Families family)
+        {
+            if (family.Familystatus?.Id == Enums.GetValue(FamilyStatus.CORTADO))
+            {
+                return Color.FromArgb(255, 218, 218); 
+            }
+            else if (family.Familystatus?.Id == Enums.GetValue(FamilyStatus.EMESPERA))
+            {
+                return Color.FromArgb(252, 214, 255); 
+            }
+            else if (string.IsNullOrEmpty(family.Name) ||
+                     string.IsNullOrEmpty(family.Document) ||
+                     string.IsNullOrEmpty(family.Phone))
+            {
+                return Color.FromArgb(249, 255, 213); 
+            }
+
+            return Color.White; // No color
+        }
+
 
         public void Dispose()
         {

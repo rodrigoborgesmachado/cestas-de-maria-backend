@@ -242,6 +242,28 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         }
 
         /// <summary>
+        /// List paged
+        /// </summary>
+        /// <param name="quantityMax"></param>
+        /// <param name="isActive"></param>
+        /// <param name="term"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="include"></param>
+        /// <returns><![CDATA[Task<PaggedBaseReturn<MainViewModel>>]]></returns>
+        [HttpGet("full-report")]
+        public async Task<IActionResult> GetFullReport()
+        {
+            var result = await _mainAppService.GetFullReport();
+
+            return Ok(new BaseReturn<string>
+            {
+                Message = "Report created",
+                Status = 200,
+                Object = result
+            });
+        }
+
+        /// <summary>
 		/// Dispose
 		/// </summary>
 		/// <param name="disposing"></param>

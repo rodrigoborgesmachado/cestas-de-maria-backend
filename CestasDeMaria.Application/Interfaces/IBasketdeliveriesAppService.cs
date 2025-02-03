@@ -29,5 +29,7 @@ namespace CestasDeMaria.Application.Interfaces
         Task<MainDTO> UpdateFamily(long id, long newFamilyId, long oldFamilyId, UserInfo user);
 
         Task<DashboardStatisticsDTO> GetDashboardStatisticsAsync(DateTime startDate, DateTime endDate);
+
+        Task<string> GetFullReport();
     }
 }

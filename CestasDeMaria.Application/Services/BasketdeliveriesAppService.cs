@@ -143,6 +143,7 @@ namespace CestasDeMaria.Application.Services
             main.Families = newFamily;
             main.Updatedby = user.id;
             main.Updated = DateTime.Now;
+            main.Deliverystatusid = (int)DeliveryStatus.SOLICITAR;
 
             _mainRepository.Update(main);
             await _mainRepository.CommitAsync();
@@ -230,9 +231,7 @@ namespace CestasDeMaria.Application.Services
             DateTime saturday = date.AddDays(daysUntilSaturday);
             int weekNumber = ISOWeek.GetWeekOfYear(saturday);
             int currentWeekNumber = ISOWeek.GetWeekOfYear(DateTime.Now);
-            int weekReference = weekNumber % 4 == 0 ? 0 : 
-                                weekNumber % 3 == 0 ? 3 :
-                                weekNumber % 2 == 0 ? 2 : 1;
+            int weekReference = (weekNumber % 4 == 0) ? 4 : weekNumber % 4;
 
             var result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, weekNumber >= currentWeekNumber, IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
 
@@ -240,7 +239,6 @@ namespace CestasDeMaria.Application.Services
             {
                 return result.ProjectedAsCollection<MainDTO>();
             }
-            
 
             List<Main> deliveries = new List<Main>();
             int remainingBaskets = 30 - result.Sum(r => r.Families.Basketquantity);

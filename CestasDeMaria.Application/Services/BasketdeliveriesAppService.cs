@@ -1,24 +1,23 @@
+using CestasDeMaria.Application.DTO;
+using CestasDeMaria.Application.Helpers;
+using CestasDeMaria.Domain.Entities;
+using CestasDeMaria.Domain.ModelClasses;
+using CestasDeMaria.Infrastructure.CrossCutting.Enums;
+using Microsoft.Extensions.Options;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
+using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
 using IBlobStorageService = CestasDeMaria.Domain.Interfaces.Services.IBlobStorageService;
+using IFamiliesHIstoryStatusService = CestasDeMaria.Application.Interfaces.IFamilyfamilystatushistoryAppService;
+using IFamiliesRepository = CestasDeMaria.Domain.Interfaces.Repository.IFamiliesRepository;
 using ILoggerService = CestasDeMaria.Application.Interfaces.ILoggerAppService;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.IBasketdeliveriesRepository;
 using IMainService = CestasDeMaria.Application.Interfaces.IBasketdeliveriesAppService;
-using IFamiliesRepository = CestasDeMaria.Domain.Interfaces.Repository.IFamiliesRepository;
-using IFamiliesHIstoryStatusService = CestasDeMaria.Application.Interfaces.IFamilyfamilystatushistoryAppService;
 using Main = CestasDeMaria.Domain.Entities.Basketdeliveries;
 using MainDTO = CestasDeMaria.Application.DTO.BasketdeliveriesDTO;
-using Microsoft.Extensions.Options;
-using CestasDeMaria.Domain.ModelClasses;
-using CestasDeMaria.Application.Helpers;
-using System.Globalization;
-using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
-using CestasDeMaria.Infrastructure.CrossCutting.Enums;
-using CestasDeMaria.Application.DTO;
-using System.Diagnostics;
-using CsvHelper;
-using CestasDeMaria.Domain.Entities;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
 
 namespace CestasDeMaria.Application.Services
 {

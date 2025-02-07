@@ -259,7 +259,7 @@ VALUES (getdate(), getdate(), 1, 0, 1, 1, 'A solicitar')
 GO
 
 INSERT INTO BasketDeliveryStatus (Created, Updated, IsActive, IsDeleted, CreatedBy, UpdatedBy, Description)
-VALUES (getdate(), getdate(), 1, 0, 1, 1, 'Solicitado')
+VALUES (getdate(), getdate(), 1, 0, 1, 1, 'Contatado')
 GO
 
 INSERT INTO BasketDeliveryStatus (Created, Updated, IsActive, IsDeleted, CreatedBy, UpdatedBy, Description)

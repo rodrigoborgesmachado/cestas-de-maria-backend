@@ -1,7 +1,6 @@
 ﻿using CestasDeMaria.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
 
 namespace CestasDeMaria.Infrastructure.Data.Context

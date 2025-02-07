@@ -128,11 +128,11 @@ namespace CestasDeMaria.Application.Services
             return main.ProjectedAs<MainDTO>();
         }
 
-        public async Task<string> GetReport(int quantityMax, string isActive = null, string term = null, string orderBy = null, string? include = null)
+        public async Task<string> GetReport(Enums.FamilyStatus? status, string isActive = null, string term = null, string orderBy = null, string? include = null)
         {
             await _loggerService.InsertAsync($"Report - Starting GetReport - {this.GetType().Name}");
 
-            var result = await GetAllPagedAsync(1, quantityMax == 0 ? int.MaxValue : quantityMax, null, isActive, term, orderBy, include);
+            var result = await GetAllPagedAsync(1, int.MaxValue, status, isActive, term, orderBy, include);
             string link = await UploadReport(result.Item3.ToList());
 
             await _loggerService.InsertAsync($"Report - Finishing GetReport - {this.GetType().Name}");

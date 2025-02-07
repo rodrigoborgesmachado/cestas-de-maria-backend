@@ -94,18 +94,18 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         }
 
         /// <summary>
-        /// List paged
+        /// Report
         /// </summary>
-        /// <param name="quantityMax"></param>
+        /// <param name="status"></param>
         /// <param name="isActive"></param>
         /// <param name="term"></param>
         /// <param name="orderBy"></param>
         /// <param name="include"></param>
-        /// <returns><![CDATA[Task<PaggedBaseReturn<MainViewModel>>]]></returns>
+        /// <returns></returns>
         [HttpGet("export")]
-        public async Task<IActionResult> Export(int quantityMax, string isActive = null, string term = null, string orderBy = null, string? include = null)
+        public async Task<IActionResult> Export(Enums.FamilyStatus? status, string isActive = null, string term = null, string orderBy = null, string? include = null)
         {
-            var result = await _mainAppService.GetReport(quantityMax, isActive, term, orderBy: orderBy, include: include);
+            var result = await _mainAppService.GetReport(status, isActive, term, orderBy, include);
 
             return Ok(new BaseReturn<string>
             {

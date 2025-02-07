@@ -11,6 +11,8 @@
         public int QuantityDeliveryCompleted { get; set; }
         public int QuantityDeliveryMissed { get; set; }
         public int QuantityDeliveryCalled { get; set; }
+        public int QuantityBasketDelivered { get; set; }
+        public int QuantityBasketNotDelivered { get; set; }
         public Dictionary<string, int> QuantityDeliveriesPerWeekday { get; set; } = new();
     }
 }

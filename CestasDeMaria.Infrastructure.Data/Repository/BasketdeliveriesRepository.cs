@@ -124,6 +124,9 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
                 .Select(g => new { StatusId = g.Key, Count = g.Count() })
                 .ToListAsync();
 
+            var quantityBaskterDelivered = _currentContext.Basketdeliveries.Where(d => d.Deliverystatusid.Equals(Enums.GetValue(DeliveryStatus.ENTREGUE))).Sum(b => b.Families.Basketquantity);
+            var quantityBaskterNotDelivered = _currentContext.Basketdeliveries.Where(d => d.Deliverystatusid.Equals(Enums.GetValue(DeliveryStatus.FALTOU))).Sum(b => b.Families.Basketquantity);
+
             var deliveriesByWeekday = await _currentContext.Basketdeliveries
                 .Where(b => b.Created >= startDate && b.Created <= endDate &&
                             b.Deliverystatusid.Equals(Enums.GetValue(DeliveryStatus.ENTREGUE)))
@@ -150,6 +153,8 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
                 QuantityDeliveryCompleted = deliveries.FirstOrDefault(d => d.StatusId == Enums.GetValue(DeliveryStatus.ENTREGUE))?.Count ?? 0,
                 QuantityDeliveryMissed = deliveries.FirstOrDefault(d => d.StatusId == Enums.GetValue(DeliveryStatus.FALTOU))?.Count ?? 0,
                 QuantityDeliveryCalled = deliveries.FirstOrDefault(d => d.StatusId == Enums.GetValue(DeliveryStatus.SOLICITADO))?.Count ?? 0,
+                QuantityBasketDelivered = quantityBaskterDelivered,
+                QuantityBasketNotDelivered = quantityBaskterNotDelivered,
 
                 QuantityDeliveriesPerWeekday = deliveriesByWeekday.OrderBy(d => d.Weekday).ToDictionary(
                     d => d.Weekday.ToString(),

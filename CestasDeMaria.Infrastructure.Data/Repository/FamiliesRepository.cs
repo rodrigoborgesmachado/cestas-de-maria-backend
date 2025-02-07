@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.IFamiliesRepository;
 using CestasDeMaria.Infrastructure.CrossCutting.Enums;
+using CestasDeMaria.Infrastructure.CrossCutting.Mail;
 
 namespace CestasDeMaria.Infrastructure.Data.Repository
 {
@@ -128,7 +129,12 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
             if (!string.IsNullOrEmpty(term))
             {
-                query = query.Where(c => c.Name.ToUpper().Contains(term.ToUpper()) || c.Document.ToUpper().Contains(term.ToUpper()));
+                query = query.Where(c => c.Name.ToUpper().Contains(term.ToUpper()));
+
+                if(!string.IsNullOrEmpty(Regex.Replace(term, @"\D", "")))
+                {
+                    query = query.Where(c => c.Document.ToUpper().Contains(Regex.Replace(term, @"\D", "")));
+                }
             }
 
             if(status != null)

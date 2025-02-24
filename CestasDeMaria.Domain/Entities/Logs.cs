@@ -3,13 +3,13 @@ using System.Reflection;
 
 namespace CestasDeMaria.Domain.Entities
 {
-    public class Logger : BaseEntity
+    public class Logs : BaseEntity
     {
-        public Logger()
+        public Logs()
         {
         }
 
-        public Logger(Exception ex)
+        public Logs(Exception ex)
             : this()
         {
             Message = ex.Message;
@@ -20,14 +20,14 @@ namespace CestasDeMaria.Domain.Entities
             Updated = DateTime.Now;
         }
 
-        public Logger(string message, long personCode)
+        public Logs(string message, long personCode)
             : this()
         {
             Message = message;
             Adminid = personCode;
         }
 
-        public Logger(string message, string methodName = "", string className = "", int frame = 1)
+        public Logs(string message, string methodName = "", string className = "", int frame = 1)
             : this()
         {
             Message = message;

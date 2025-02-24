@@ -1,7 +1,7 @@
 ﻿using CestasDeMaria.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.ILoggerRepository;
-using Main = CestasDeMaria.Domain.Entities.Logger;
+using Main = CestasDeMaria.Domain.Entities.Logs;
 
 namespace CestasDeMaria.Infrastructure.Data.Repository
 {

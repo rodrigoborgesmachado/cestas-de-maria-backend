@@ -29,7 +29,7 @@ namespace CestasDeMaria.Infrastructure.Data.Context
 
         #region DbSet
 
-        public DbSet<Logger> Logger { get; set; }
+        public DbSet<Logs> Logs { get; set; }
         public DbSet<Mailmessage> MailMessage { get; set; }
         public DbSet<Admins> Admins { get; set; }
         public DbSet<Basketdeliveries> Basketdeliveries { get; set; }
@@ -58,7 +58,7 @@ namespace CestasDeMaria.Infrastructure.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Logger>().HasKey(e => new { e.Id });
+            modelBuilder.Entity<Logs>().HasKey(e => new { e.Id });
             modelBuilder.Entity<Mailmessage>().HasKey(e => new { e.Id });
 
             modelBuilder.Entity<Families>()
@@ -78,7 +78,7 @@ namespace CestasDeMaria.Infrastructure.Data.Context
             .WithOne(sc => sc.Families)
             .HasForeignKey(sc => new { sc.Familyid });
 
-            modelBuilder.Entity<Logger>()
+            modelBuilder.Entity<Logs>()
             .HasOne(sc => sc.Admins)
             .WithMany()
             .HasForeignKey(sc => new { sc.Adminid });

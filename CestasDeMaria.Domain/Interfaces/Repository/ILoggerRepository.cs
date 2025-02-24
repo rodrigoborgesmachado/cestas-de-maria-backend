@@ -1,4 +1,4 @@
-﻿using Main = CestasDeMaria.Domain.Entities.Logger;
+﻿using Main = CestasDeMaria.Domain.Entities.Logs;
 
 namespace CestasDeMaria.Domain.Interfaces.Repository
 {

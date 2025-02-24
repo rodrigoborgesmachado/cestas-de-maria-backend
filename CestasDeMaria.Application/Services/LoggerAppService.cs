@@ -4,7 +4,7 @@ using CestasDeMaria.Domain.ModelClasses;
 using Microsoft.Extensions.Options;
 using IMainRepository = CestasDeMaria.Domain.Interfaces.Repository.ILoggerRepository;
 using IMainService = CestasDeMaria.Application.Interfaces.ILoggerAppService;
-using Main = CestasDeMaria.Domain.Entities.Logger;
+using Main = CestasDeMaria.Domain.Entities.Logs;
 using MainDTO = CestasDeMaria.Application.DTO.LoggerDTO;
 
 namespace CestasDeMaria.Application.Services

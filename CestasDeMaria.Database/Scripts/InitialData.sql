@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Logger](
+﻿CREATE TABLE [dbo].[Logs](
 	[Id] [bigint] IDENTITY(1,1) NOT NULL,
 	[Created] [datetime] NOT NULL,
 	[Updated] [datetime] NOT NULL,

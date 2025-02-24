@@ -1,4 +1,4 @@
-﻿using Main = CestasDeMaria.Domain.Entities.Logger;
+﻿using Main = CestasDeMaria.Domain.Entities.Logs;
 using MainDTO = CestasDeMaria.Application.DTO.LoggerDTO;
 
 namespace CestasDeMaria.Application.Interfaces

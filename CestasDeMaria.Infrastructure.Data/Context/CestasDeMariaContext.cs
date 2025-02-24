@@ -53,6 +53,8 @@ namespace CestasDeMaria.Infrastructure.Data.Context
                 })
 #if DEBUG
                 .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information); // Log SQL queries in debug mode
+#else
+;
 #endif
         }
 

@@ -43,8 +43,11 @@ namespace CestasDeMaria.Infrastructure.Data.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connString = string.IsNullOrEmpty(connectionString)
-                ? _configuration["connectionstring"]
+                ? _configuration["ConnectionStrings"]
                 : connectionString;
+            
+            Console.WriteLine("Here");
+            Console.WriteLine(connString);
 
             optionsBuilder
                 .UseSqlServer(connString, options =>

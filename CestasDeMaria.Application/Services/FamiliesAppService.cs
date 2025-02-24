@@ -53,6 +53,12 @@ namespace CestasDeMaria.Application.Services
             return result.ProjectedAs<MainDTO>();
         }
 
+        public async Task<MainDTO> GetByPhoneAsync(string phone, string? include = null)
+        {
+            var result = await _mainRepository.GetByPhoneAsync(phone, IncludesMethods.GetIncludes(include, allowInclude));
+            return result.ProjectedAs<MainDTO>();
+        }
+
         public async Task<Tuple<int, int, IEnumerable<MainDTO>>> GetAllPagedAsync(int page, int quantity, Enums.FamilyStatus? status, string isActive = null, string term = null, string orderBy = null, string? include = null)
         {
             var tuple = await _mainRepository.GetAllPagedAsync(page, quantity, status, isActive, term, orderBy, IncludesMethods.GetIncludes(include, allowInclude));

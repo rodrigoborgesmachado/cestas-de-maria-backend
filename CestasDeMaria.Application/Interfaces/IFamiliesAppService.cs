@@ -11,6 +11,8 @@ namespace CestasDeMaria.Application.Interfaces
 
         Task<MainDTO> GetByDocumentAsync(string document, string? include = null);
 
+        Task<MainDTO> GetByPhoneAsync(string phone, string? include = null);
+
         Task<MainDTO> InsertAsync(MainDTO mainDto);
 
         Task<MainDTO> UpdateAsync(long id, MainDTO mainDto);

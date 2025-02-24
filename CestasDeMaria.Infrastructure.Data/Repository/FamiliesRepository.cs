@@ -55,6 +55,21 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             return await query.SingleOrDefaultAsync();
         }
 
+        public async Task<Main> GetByPhoneAsync(string phone, string[] include = null)
+        {
+            var query = GetQueryable().Where(p => p.Phone.Equals(phone));
+
+            if (include != null)
+            {
+                foreach (var toInclude in include)
+                {
+                    query = query.Include(toInclude);
+                }
+            }
+
+            return await query.SingleOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<Main>> GetEligibleFamiliesAsync(int weekNumber, string[] include = null)
         {
             var query = GetQueryable().Where(p => p.DeliveryWeek.Equals(weekNumber) && p.Familystatusid.Equals(4)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
@@ -129,11 +144,14 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
             if (!string.IsNullOrEmpty(term))
             {
-                query = query.Where(c => c.Name.ToUpper().Contains(term.ToUpper()));
-
-                if(!string.IsNullOrEmpty(Regex.Replace(term, @"\D", "")))
+                var temp = Regex.Replace(term, @"\D", "");
+                if(!string.IsNullOrEmpty(temp))
                 {
-                    query = query.Where(c => c.Document.ToUpper().Contains(Regex.Replace(term, @"\D", "")));
+                    query = query.Where(c => c.Document.Contains(temp) || c.Phone.Contains(temp));
+                }
+                else
+                {
+                    query = query.Where(c => c.Name.ToUpper().Contains(term.ToUpper()));
                 }
             }
 

@@ -51,15 +51,43 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         }
 
         /// <summary>
-        /// Get by code
+        /// Get by phone
         /// </summary>
         /// <param name="code"></param>
         /// <param name="include"></param>
         /// <returns><![CDATA[Task<MainViewModel>]]></returns>
-        [HttpGet("{code}")]
+        [HttpGet("{phone}")]
         public async Task<IActionResult> Get(long code, string? include = null)
         {
             var mainDto = await _mainAppService.GetAsync(code, include);
+
+            return Ok(mainDto.ProjectedAs<MainViewModel>());
+        }
+
+        /// <summary>
+        /// Get by document
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="include"></param>
+        /// <returns><![CDATA[Task<MainViewModel>]]></returns>
+        [HttpGet("getbydocument/{document}")]
+        public async Task<IActionResult> GetByDocument(string document, string? include = null)
+        {
+            var mainDto = await _mainAppService.GetByDocumentAsync(document, include);
+
+            return Ok(mainDto.ProjectedAs<MainViewModel>());
+        }
+
+        /// <summary>
+        /// Get by phone
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <param name="include"></param>
+        /// <returns><![CDATA[Task<MainViewModel>]]></returns>
+        [HttpGet("getbyphone/{phone}")]
+        public async Task<IActionResult> GetByPhone(string phone, string? include = null)
+        {
+            var mainDto = await _mainAppService.GetByPhoneAsync(phone, include);
 
             return Ok(mainDto.ProjectedAs<MainViewModel>());
         }
@@ -131,7 +159,20 @@ namespace CestasDeMaria.Presentation.Api.Controllers
                     return BadRequest(new
                     {
                         code = 401,
-                        message = "Família já existe!"
+                        message = "Documento já cadastrado!"
+                    });
+                }
+            }
+
+            if (!string.IsNullOrEmpty(model.Phone))
+            {
+                var exists = await _mainAppService.GetByPhoneAsync(Regex.Replace(model.Phone, @"\D", ""));
+                if (exists != null)
+                {
+                    return BadRequest(new
+                    {
+                        code = 401,
+                        message = "Telefone já cadastrado!"
                     });
                 }
             }

@@ -46,13 +46,13 @@ namespace CestasDeMaria.Presentation.Api.App_Start
                 _app.Configuration.Bind(options);
             });
 
-            _app.Services.Configure<ConnectionStrings>(options =>
+            _app.Services.Configure<ConnectionStringsInfo>(options =>
             {
                 _app.Configuration.Bind(options);
             });
 
             _app.Services.AddDbContext<CestasDeMariaContext>(options =>
-                options.UseSqlServer(_app.Configuration["ConnectionStrings"])
+                options.UseSqlServer(_app.Configuration["ConnectionStringsInfo"])
             );
 
             _app.Services.AddControllers()

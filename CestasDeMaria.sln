@@ -21,19 +21,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.5 - Database", "1.5 - Dat
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CestasDeMaria.Database", "CestasDeMaria.Database\CestasDeMaria.Database.sqlproj", "{A93B450E-C5F7-4462-A0BE-C6B19DE96F09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CestasDeMaria.Infrastructure.CrossCutting.IoC", "CestasDeMaria.Infrastructure.CrossCutting.IoC\CestasDeMaria.Infrastructure.CrossCutting.IoC.csproj", "{BF5FC75F-8E88-442C-A070-1E0E74F9688D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CestasDeMaria.Infrastructure.CrossCutting.IoC", "CestasDeMaria.Infrastructure.CrossCutting.IoC\CestasDeMaria.Infrastructure.CrossCutting.IoC.csproj", "{BF5FC75F-8E88-442C-A070-1E0E74F9688D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CestasDeMaria.Infrastructure.CrossCutting", "CestasDeMaria.Infrastructure.CrossCutting\CestasDeMaria.Infrastructure.CrossCutting.csproj", "{0FF9E218-7174-4D98-B305-24D86F868166}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CestasDeMaria.Infrastructure.CrossCutting", "CestasDeMaria.Infrastructure.CrossCutting\CestasDeMaria.Infrastructure.CrossCutting.csproj", "{0FF9E218-7174-4D98-B305-24D86F868166}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CestasDeMaria.Infrastructure.Data", "CestasDeMaria.Infrastructure.Data\CestasDeMaria.Infrastructure.Data.csproj", "{5F1151C0-23B5-44EB-9E92-82BE5F607A80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CestasDeMaria.Infrastructure.Data", "CestasDeMaria.Infrastructure.Data\CestasDeMaria.Infrastructure.Data.csproj", "{5F1151C0-23B5-44EB-9E92-82BE5F607A80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CestasDeMaria.Domain", "CestasDeMaria.Domain\CestasDeMaria.Domain.csproj", "{4001DE96-9215-474C-8597-CBF6E76EAFFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CestasDeMaria.Domain", "CestasDeMaria.Domain\CestasDeMaria.Domain.csproj", "{4001DE96-9215-474C-8597-CBF6E76EAFFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CestasDeMaria.Application", "CestasDeMaria.Application\CestasDeMaria.Application.csproj", "{D7EE3CE0-43D4-4A41-9A54-522B8D55681F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CestasDeMaria.Application", "CestasDeMaria.Application\CestasDeMaria.Application.csproj", "{D7EE3CE0-43D4-4A41-9A54-522B8D55681F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CestasDeMaria.Presentation.Model", "CestasDeMaria.Presentation.Model\CestasDeMaria.Presentation.Model.csproj", "{E1F455AE-C95A-4888-BB3C-8279B6B937B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CestasDeMaria.Presentation.Model", "CestasDeMaria.Presentation.Model\CestasDeMaria.Presentation.Model.csproj", "{E1F455AE-C95A-4888-BB3C-8279B6B937B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CestasDeMaria.Presentation.Api", "CestasDeMaria.Presentation.Api\CestasDeMaria.Presentation.Api.csproj", "{F3630F08-DA99-495B-B0ED-180A51571181}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CestasDeMaria.Presentation.Api", "CestasDeMaria.Presentation.Api\CestasDeMaria.Presentation.Api.csproj", "{F3630F08-DA99-495B-B0ED-180A51571181}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,10 +42,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A93B450E-C5F7-4462-A0BE-C6B19DE96F09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A93B450E-C5F7-4462-A0BE-C6B19DE96F09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A93B450E-C5F7-4462-A0BE-C6B19DE96F09}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{A93B450E-C5F7-4462-A0BE-C6B19DE96F09}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A93B450E-C5F7-4462-A0BE-C6B19DE96F09}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A93B450E-C5F7-4462-A0BE-C6B19DE96F09}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{BF5FC75F-8E88-442C-A070-1E0E74F9688D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BF5FC75F-8E88-442C-A070-1E0E74F9688D}.Debug|Any CPU.Build.0 = Debug|Any CPU

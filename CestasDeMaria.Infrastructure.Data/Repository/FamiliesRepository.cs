@@ -87,7 +87,7 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
         public async Task<IEnumerable<Main>> GetInProgressFamiliesAsync(int weekNumber, string[] include = null)
         {
-            var query = GetQueryable().Where(p => p.DeliveryWeek.Equals(weekNumber) && p.Familystatusid.Equals(3)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
+            var query = GetQueryable().Where(p => p.DeliveryWeek.Equals(weekNumber) && p.Familystatusid.Equals(3)).OrderBy(c => c.Created).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
 
             if (include != null)
             {

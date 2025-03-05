@@ -249,6 +249,8 @@ namespace CestasDeMaria.Application.Services
             {
                 if (remainingBaskets <= 0) break;
 
+                if (deliveries.Exists(d => d.Id.Equals(family.Id))) continue;
+
                 deliveries.Add(new Main
                 {
                     Familyid = family.Id,

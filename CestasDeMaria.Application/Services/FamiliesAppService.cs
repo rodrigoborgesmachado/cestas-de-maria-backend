@@ -117,6 +117,7 @@ namespace CestasDeMaria.Application.Services
             main.Hasseverelimitation = mainDto.Hasseverelimitation;
             main.IsActive = mainDto.IsActive;
             main.IsDeleted = mainDto.IsDeleted;
+            main.Name = mainDto.Name;
 
             _mainRepository.Update(main);
             await _mainRepository.CommitAsync();

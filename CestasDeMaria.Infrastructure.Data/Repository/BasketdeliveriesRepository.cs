@@ -47,7 +47,7 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             if (onlyValid)
                 query = query.Where(p => p.Families.Familystatusid != 1);
 
-            query = query.OrderByDescending(p => p.Created);
+            query = query.OrderBy(p => p.Families.Name);
 
             if (include != null)
             {

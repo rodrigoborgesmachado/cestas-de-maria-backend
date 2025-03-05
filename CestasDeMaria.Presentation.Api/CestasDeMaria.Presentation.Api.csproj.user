@@ -7,4 +7,7 @@
     <ActiveDebugProfile>prod</ActiveDebugProfile>
     <NameOfLastUsedPublishProfile>C:\REPOS\sunsale\cestas-de-maria-backend\CestasDeMaria.Presentation.Api\Properties\PublishProfiles\cestas-de-maria - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

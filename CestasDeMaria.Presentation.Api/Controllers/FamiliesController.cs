@@ -56,7 +56,7 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         /// <param name="code"></param>
         /// <param name="include"></param>
         /// <returns><![CDATA[Task<MainViewModel>]]></returns>
-        [HttpGet("{phone}")]
+        [HttpGet("{code}")]
         public async Task<IActionResult> Get(long code, string? include = null)
         {
             var mainDto = await _mainAppService.GetAsync(code, include);

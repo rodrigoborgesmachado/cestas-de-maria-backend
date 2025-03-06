@@ -234,8 +234,12 @@ namespace CestasDeMaria.Application.Services
             int weekReference = (weekNumber % 4 == 0) ? 4 : weekNumber % 4;
 
             var result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, weekNumber >= currentWeekNumber, IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
+            result = result
+                    .GroupBy(i => i.Families.Id) 
+                    .Select(g => g.First()) 
+                    .ToList(); 
 
-            if(result.Sum(r => r.Families.Basketquantity) >= 30 || weekNumber < currentWeekNumber)
+            if (result.Sum(r => r.Families.Basketquantity) >= 30 || weekNumber < currentWeekNumber)
             {
                 return result.ProjectedAsCollection<MainDTO>();
             }
@@ -247,9 +251,11 @@ namespace CestasDeMaria.Application.Services
             var inProgressFamilies = await _familiesRepository.GetInProgressFamiliesAsync(weekReference);
             foreach (var family in inProgressFamilies)
             {
+                if (result.Any(i => i.Families.Id.Equals(family.Id))) continue;
+
                 if (remainingBaskets <= 0) break;
 
-                if (deliveries.Exists(d => d.Id.Equals(family.Id))) continue;
+                if (deliveries.Exists(d => d.Familyid.Equals(family.Id))) continue;
 
                 deliveries.Add(new Main
                 {
@@ -340,7 +346,7 @@ namespace CestasDeMaria.Application.Services
                 await _mainRepository.CommitAsync();
             }
 
-            result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, false, IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
+            result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, weekNumber <= currentWeekNumber, IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
 
             return result.ProjectedAsCollection<MainDTO>();
         }

@@ -11,5 +11,6 @@ namespace CestasDeMaria.Domain.Interfaces.Repository
         Task<Tuple<int, IEnumerable<Main>>> GetAllPagedAsync(int page, int quantity, DateTime? startDate, DateTime? endDate, string isActive = null, string term = null, string orderBy = null, string[] include = null);
         Task<IEnumerable<Main>> GetByWeekAndYearNumberAsync(int week, int year, bool onlyValid, string[] include = null);
         Task<DashboardStatistics> GetDashboardStatisticsAsync(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<Main>> GetByFamilyAsync(long familyCode, string[] include = null);
     }
 }

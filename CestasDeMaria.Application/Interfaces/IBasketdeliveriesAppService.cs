@@ -31,5 +31,7 @@ namespace CestasDeMaria.Application.Interfaces
         Task<DashboardStatisticsDTO> GetDashboardStatisticsAsync(DateTime startDate, DateTime endDate);
 
         Task<string> GetFullReport();
+
+        Task<IEnumerable<MainDTO>> GetByFamilyAsync(long familyCode, string? include = null);
     }
 }

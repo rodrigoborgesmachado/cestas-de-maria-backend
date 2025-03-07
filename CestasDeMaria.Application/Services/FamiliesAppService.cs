@@ -10,6 +10,7 @@ using CestasDeMaria.Domain.ModelClasses;
 using CestasDeMaria.Application.Helpers;
 using System.Text.RegularExpressions;
 using CestasDeMaria.Infrastructure.CrossCutting.Enums;
+using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
 
 namespace CestasDeMaria.Application.Services
 {
@@ -144,6 +145,26 @@ namespace CestasDeMaria.Application.Services
 
             await _loggerService.InsertAsync($"Report - Finishing GetReport - {this.GetType().Name}");
             return link;
+        }
+
+        public async Task<MainDTO> UpdateStatus(long id, UserInfo user, FamilyStatus status)
+        {
+            var main = await _mainRepository.GetAsync(id);
+            if (main == null)
+            {
+                return null;
+            }
+
+            main.Familystatusid = Enums.GetValue(status);
+            main.Updatedby = user.id;
+            main.Updated = DateTime.Now;
+
+            _mainRepository.Update(main);
+            await _mainRepository.CommitAsync();
+
+            await _loggerService.InsertAsync($"Alterando status da família {main.Name} para {Enums.GetDescription(status)} pelo usuário {user.username}", user.id);
+
+            return main.ProjectedAs<MainDTO>();
         }
 
         public void Dispose()

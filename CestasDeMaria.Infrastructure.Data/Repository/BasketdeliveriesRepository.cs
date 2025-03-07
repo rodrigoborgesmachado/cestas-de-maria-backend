@@ -41,11 +41,26 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             return await query.SingleOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<Main>> GetByFamilyAsync(long familyCode, string[] include = null)
+        {
+            var query = GetQueryable().Where(p => p.Familyid.Equals(familyCode));
+
+            if (include != null)
+            {
+                foreach (var toInclude in include)
+                {
+                    query = query.Include(toInclude);
+                }
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task<IEnumerable<Main>> GetByWeekAndYearNumberAsync(int week, int year, bool onlyValid, string[] include = null)
         {
             var query = GetQueryable().Where(p => p.Weekofmonth.Equals(week) && p.Created.Year.Equals(year)).AsNoTracking();
             if (onlyValid)
-                query = query.Where(p => p.Families.Familystatusid != 1);
+                query = query.Where(p => p.Families.Familystatusid != 1 || (p.Families.Familystatusid == 1 && p.Deliverystatusid == 4));
 
             query = query.OrderBy(p => p.Families.Name);
 

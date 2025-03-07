@@ -185,34 +185,6 @@ namespace CestasDeMaria.Application.Services
                 main.Families.Updatedby = user.id;
             }
 
-            if (status == DeliveryStatus.FALTOU)
-            {
-                var history = await _familiesHIstoryStatusService.GetByFamilyAsync(main.Familyid);
-                if (history != null && history.Count() >= 3)
-                {
-                    bool needToDelete = history
-                        .OrderByDescending(p => p.Created) 
-                        .Take(3) 
-                        .All(p => p.Newfamilystatusid.Equals(Enums.GetValue(DeliveryStatus.FALTOU)));
-
-                    if (needToDelete)
-                    {
-                        await _familiesHIstoryStatusService.InsertAsync(new DTO.FamilyfamilystatushistoryDTO()
-                        {
-                            Createdby = user.id,
-                            Updatedby = user.id,
-                            Familyid = main.Familyid,
-                            Newfamilystatusid = Enums.GetValue(FamilyStatus.CORTADO),
-                            Oldfamilystatusid = main.Families.Familystatusid
-                        });
-
-                        main.Families.Familystatusid = Enums.GetValue(FamilyStatus.CORTADO);
-
-                        await _loggerService.InsertAsync($"Família {main.Families.Name} faltou às últimas 3 entregas, assim será cortada!", user.id);
-                    }
-                }
-            }
-
             main.Deliverystatusid = Enums.GetValue(status);
             main.Updatedby = user.id;
             main.Updated = DateTime.Now;
@@ -233,7 +205,7 @@ namespace CestasDeMaria.Application.Services
             int currentWeekNumber = ISOWeek.GetWeekOfYear(DateTime.Now);
             int weekReference = (weekNumber % 4 == 0) ? 4 : weekNumber % 4;
 
-            var result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, weekNumber >= currentWeekNumber, IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
+            var result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, (weekNumber > currentWeekNumber || !(weekNumber == currentWeekNumber && DateTime.Now.DayOfWeek == DayOfWeek.Saturday)), IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
             result = result
                     .GroupBy(i => i.Families.Id) 
                     .Select(g => g.First()) 
@@ -298,7 +270,6 @@ namespace CestasDeMaria.Application.Services
                 }
             }
 
-            // Get families to put on elegible if there are any remainingBaskets
             if (remainingBaskets > 0)
             {
                 var additionalFamilies = await _familiesRepository.GetWaitingFamiliesAsync();
@@ -346,7 +317,7 @@ namespace CestasDeMaria.Application.Services
                 await _mainRepository.CommitAsync();
             }
 
-            result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, weekNumber <= currentWeekNumber, IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
+            result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, (weekNumber > currentWeekNumber || !(weekNumber == currentWeekNumber && DateTime.Now.DayOfWeek == DayOfWeek.Saturday)), IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
 
             return result.ProjectedAsCollection<MainDTO>();
         }
@@ -512,6 +483,11 @@ namespace CestasDeMaria.Application.Services
             return Color.White; // No color
         }
 
+        public async Task<IEnumerable<MainDTO>> GetByFamilyAsync(long familyCode, string? include = null)
+        {
+            var list = await _mainRepository.GetByFamilyAsync(familyCode, IncludesMethods.GetIncludes(include, allowInclude));
+            return list.ProjectedAsCollection<MainDTO>();
+        }
 
         public void Dispose()
         {

@@ -72,7 +72,7 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
         public async Task<IEnumerable<Main>> GetEligibleFamiliesAsync(int weekNumber, string[] include = null)
         {
-            var query = GetQueryable().Where(p => p.DeliveryWeek.Equals(weekNumber) && p.Familystatusid.Equals(4)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
+            var query = GetQueryable().Where(p => p.DeliveryWeek.Equals(weekNumber) && p.Familystatusid.Equals(4) && !string.IsNullOrEmpty(p.Document) && !string.IsNullOrEmpty(p.Phone)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
 
             if (include != null)
             {

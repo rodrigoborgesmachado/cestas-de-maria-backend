@@ -266,6 +266,19 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         }
 
         /// <summary>
+        /// Get all
+        /// </summary>
+        /// <param name="include"></param>
+        /// <returns><![CDATA[Task<IEnumerable<MainViewModel>>]]></returns>
+        [HttpGet("gethistorybyfamily/{code}")]
+        public async Task<IActionResult> GetHistoryByFamily(long code, string? include = null)
+        {
+            var mainDto = await _mainAppService.GetByFamilyAsync(code, include);
+
+            return Ok(mainDto.ProjectedAsCollection<MainViewModel>());
+        }
+
+        /// <summary>
 		/// Dispose
 		/// </summary>
 		/// <param name="disposing"></param>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
+using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
 using IMainAppService = CestasDeMaria.Application.Interfaces.IFamiliesAppService;
 using MainDTO = CestasDeMaria.Application.DTO.FamiliesDTO;
 using MainViewModel = CestasDeMaria.Presentation.Model.ViewModels.FamiliesViewModel;
@@ -218,6 +219,27 @@ namespace CestasDeMaria.Presentation.Api.Controllers
             var result = await _mainAppService.RemoveAsync(mainDto);
 
             return Ok(result);
+        }
+
+        /// <summary>
+		/// Insert new
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns><![CDATA[Task<IActionResult>]]></returns>
+        [HttpPost("update-status/{id}")]
+        public async Task<IActionResult> UpdateStatus(long id, [FromQuery] FamilyStatus status)
+        {
+            var user = await tokenController.GetUserFromRequest();
+
+            try
+            {
+                var result = await _mainAppService.UpdateStatus(id, user, status);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>

@@ -386,14 +386,18 @@ namespace CestasDeMaria.Application.Services
 
 
                 int columnIndex = 13;
-                var saturdayColumns = new Dictionary<DateTime, int>();
+                var saturdayColumns = new Dictionary<(int Year, int WeekOfYear), int>();
 
                 foreach (var saturday in saturdays)
                 {
+                    int year = saturday.Year;
+                    int weekOfYear = ISOWeek.GetWeekOfYear(saturday);
+
                     worksheet.Cells[1, columnIndex].Value = saturday.ToString("yyyy-MM-dd");
                     worksheet.Cells[1, columnIndex].Style.Font.Bold = true;
                     worksheet.Column(columnIndex).AutoFit();
-                    saturdayColumns[saturday] = columnIndex;
+
+                    saturdayColumns[(year, weekOfYear)] = columnIndex;
                     columnIndex++;
                 }
 
@@ -427,12 +431,16 @@ namespace CestasDeMaria.Application.Services
                     var familyDeliveries = deliveries.Where(d => d.Familyid == family.Id);
                     foreach (var delivery in familyDeliveries)
                     {
-                        if (saturdayColumns.TryGetValue(delivery.Created.Date, out int col))
+                        int deliveryYear = delivery.Created.Year;
+                        int deliveryWeek = delivery.Weekofmonth;
+
+                        if (saturdayColumns.TryGetValue((deliveryYear, deliveryWeek), out int col))
                         {
                             var status = delivery.Basketdeliverystatus?.Id;
-                            worksheet.Cells[row, col].Value = status == Enums.GetValue(DeliveryStatus.ENTREGUE) ? "OK" : 
-                                                            (status == Enums.GetValue(DeliveryStatus.FALTOU) ? "FALTOU" :
-                                                            status == Enums.GetValue(DeliveryStatus.SOLICITADO) ? "SOLICITADO" : "");
+                            worksheet.Cells[row, col].Value = status == Enums.GetValue(DeliveryStatus.ENTREGUE) ? "OK" :
+                                                              status == Enums.GetValue(DeliveryStatus.FALTOU) ? "FALTOU" :
+                                                              status == Enums.GetValue(DeliveryStatus.SOLICITADO) ? "SOLICITADO" :
+                                                              "A SOLICITAR";
                         }
                     }
 

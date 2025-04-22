@@ -225,10 +225,8 @@ namespace CestasDeMaria.Application.Services
             var inProgressFamilies = await _familiesRepository.GetInProgressFamiliesAsync(weekReference);
             foreach (var family in inProgressFamilies)
             {
-                if (result.Any(i => i.Families.Id.Equals(family.Id))) continue;
-
                 if (remainingBaskets <= 0) break;
-
+                if (result.Any(i => i.Families.Id.Equals(family.Id))) continue;
                 if (deliveries.Exists(d => d.Familyid.Equals(family.Id))) continue;
 
                 deliveries.Add(new Main
@@ -254,6 +252,8 @@ namespace CestasDeMaria.Application.Services
                 foreach (var family in eligibleFamilies)
                 {
                     if (remainingBaskets <= 0) break;
+                    if (result.Any(i => i.Families.Id.Equals(family.Id))) continue;
+                    if (deliveries.Exists(d => d.Familyid.Equals(family.Id))) continue;
 
                     deliveries.Add(new Main
                     {
@@ -278,8 +278,10 @@ namespace CestasDeMaria.Application.Services
                 foreach (var family in additionalFamilies)
                 {
                     if (remainingBaskets <= 0) break;
-
+                    if (result.Any(i => i.Families.Id.Equals(family.Id))) continue;
+                    if (deliveries.Exists(d => d.Familyid.Equals(family.Id))) continue;
                     if (remainingBaskets - family.Basketquantity < 0) continue;
+
                     family.Familystatusid = 4;
                     family.DeliveryWeek = weekReference;
 

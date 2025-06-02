@@ -102,7 +102,7 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
         public async Task<IEnumerable<Main>> GetWaitingFamiliesAsync(string[] include = null)
         {
-            var query = GetQueryable().Where(p => p.Familystatusid.Equals(2)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).AsNoTracking();
+            var query = GetQueryable().Where(p => p.Familystatusid.Equals(2)).OrderByDescending(c => c.Children).OrderByDescending(c => c.Adults).OrderBy(c => c.Created).AsNoTracking();
 
             if (include != null)
             {

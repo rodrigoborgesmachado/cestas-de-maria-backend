@@ -81,6 +81,25 @@ namespace CestasDeMaria.Presentation.Api.App_Start
 
         private void AddAuth()
         {
+            var jwtKey = _app.Configuration["Jwt:Key"] ?? Environment.GetEnvironmentVariable("JWT_KEY");
+            var jwtIssuer = _app.Configuration["Jwt:Issuer"] ?? Environment.GetEnvironmentVariable("JWT_ISSUER");
+            var jwtAudience = _app.Configuration["Jwt:Audience"] ?? Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+
+            if (string.IsNullOrWhiteSpace(jwtKey))
+            {
+                throw new InvalidOperationException("JWT key is not configured.");
+            }
+
+            if (string.IsNullOrWhiteSpace(jwtIssuer))
+            {
+                throw new InvalidOperationException("JWT issuer is not configured.");
+            }
+
+            if (string.IsNullOrWhiteSpace(jwtAudience))
+            {
+                throw new InvalidOperationException("JWT audience is not configured.");
+            }
+
             _app.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -91,9 +110,9 @@ namespace CestasDeMaria.Presentation.Api.App_Start
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = _app.Configuration["Jwt:Issuer"],
-                    ValidAudience = _app.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_app.Configuration["Jwt:Key"])),
+                    ValidIssuer = jwtIssuer,
+                    ValidAudience = jwtAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = false,

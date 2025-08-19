@@ -51,4 +51,4 @@ jobs:
           app-name: 'cestas-de-maria'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F2EC23C7E3914538A9150BC8C29731AA }}
-          package: .
+          package: .net-app

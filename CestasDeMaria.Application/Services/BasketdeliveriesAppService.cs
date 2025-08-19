@@ -205,7 +205,7 @@ namespace CestasDeMaria.Application.Services
             int currentWeekNumber = ISOWeek.GetWeekOfYear(DateTime.Now);
             int weekReference = (weekNumber % 4 == 0) ? 4 : weekNumber % 4;
 
-            var result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, (weekNumber > currentWeekNumber || !(weekNumber == currentWeekNumber && DateTime.Now.DayOfWeek == DayOfWeek.Saturday)), IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
+            var result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, weekReference, saturday.Year, (weekNumber > currentWeekNumber || !(weekNumber == currentWeekNumber && DateTime.Now.DayOfWeek == DayOfWeek.Saturday)), IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
             result = result.Where(r => r.Families.DeliveryWeek.Equals(weekReference));
 
             result = result
@@ -321,7 +321,7 @@ namespace CestasDeMaria.Application.Services
                 await _mainRepository.CommitAsync();
             }
 
-            result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, saturday.Year, (weekNumber > currentWeekNumber || !(weekNumber == currentWeekNumber && DateTime.Now.DayOfWeek == DayOfWeek.Saturday)), IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
+            result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, weekReference, saturday.Year, (weekNumber > currentWeekNumber || !(weekNumber == currentWeekNumber && DateTime.Now.DayOfWeek == DayOfWeek.Saturday)), IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
             result = result.Where(r => r.Families.DeliveryWeek.Equals(weekReference));
 
             return result.ProjectedAsCollection<MainDTO>();

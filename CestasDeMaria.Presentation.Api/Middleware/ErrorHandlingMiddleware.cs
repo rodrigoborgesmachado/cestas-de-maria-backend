@@ -20,11 +20,13 @@ namespace CestasDeMaria.Presentation.Api.Middleware
             }
             catch (Exception ex)
             {
+                var baseException = ex.GetBaseException();
+
                 var errorResponse = new
                 {
                     Message = "An error occurred",
-                    Exception = ex.Message,
-                    ex.StackTrace,
+                    Exception = baseException.Message,
+                    StackTrace = baseException.StackTrace,
                     Environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
                 };
 

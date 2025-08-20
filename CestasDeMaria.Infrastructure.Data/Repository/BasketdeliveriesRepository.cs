@@ -58,7 +58,13 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
 
         public async Task<IEnumerable<Main>> GetByWeekAndYearNumberAsync(int week, int weekReference, int year, bool onlyValid, string[] include = null)
         {
-            var query = GetQueryable().Where(p => p.Weekofmonth.Equals(week) && p.Created.Year.Equals(year) && p.Families.DeliveryWeek.Equals(weekReference)).AsNoTracking();
+            var query = GetQueryable()
+                .Where(p => p.Weekofmonth.Equals(week) && p.Created.Year.Equals(year))
+                .AsNoTracking();
+
+            if (weekReference > 0)
+                query = query.Where(p => p.Families.DeliveryWeek.Equals(weekReference));
+
             if (onlyValid)
                 query = query.Where(p => p.Families.Familystatusid != 1 || (p.Families.Familystatusid == 1 && p.Deliverystatusid == 4));
 

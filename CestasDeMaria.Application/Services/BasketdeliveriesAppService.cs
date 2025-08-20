@@ -148,7 +148,7 @@ namespace CestasDeMaria.Application.Services
             _mainRepository.Update(main);
             await _mainRepository.CommitAsync();
 
-            await _loggerService.InsertAsync($"Alterando atendimento da famÌlia {oldFamily.Name} para famÌlia {newFamily.Name} pelo usu·rio {user.username}", user.id);
+            await _loggerService.InsertAsync($"Alterando atendimento da fam√≠lia {oldFamily.Name} para fam√≠lia {newFamily.Name} pelo usu√°rio {user.username}", user.id);
 
             return main.ProjectedAs<MainDTO>();
         }
@@ -166,7 +166,7 @@ namespace CestasDeMaria.Application.Services
                status == DeliveryStatus.ENTREGUE && main.Deliverystatusid != Enums.GetValue(DeliveryStatus.SOLICITADO) ||
                status == DeliveryStatus.FALTOU && main.Deliverystatusid != Enums.GetValue(DeliveryStatus.SOLICITADO))
             {
-                throw new Exception("N„o È possÌvel mudar o status!");
+                throw new Exception("N√£o √© poss√≠vel mudar o status!");
             }
 
             if(status == DeliveryStatus.SOLICITADO && main.Families.Familystatusid.Equals(Enums.GetValue(FamilyStatus.ELEGIVEL)))
@@ -192,13 +192,25 @@ namespace CestasDeMaria.Application.Services
             _mainRepository.Update(main);
             await _mainRepository.CommitAsync();
 
-            await _loggerService.InsertAsync($"Alterando status da entrega da famÌlia {main.Families.Name} para {Enums.GetDescription(status)} na semana {main.Weekofmonth} pelo usu·rio {user.username}", user.id);
+            var result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, 0, saturday.Year, (weekNumber > currentWeekNumber || !(weekNumber == currentWeekNumber && DateTime.Now.DayOfWeek == DayOfWeek.Saturday)), IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
+            var invalidDeliveries = result.Where(r => !r.Families.DeliveryWeek.Equals(weekReference)).ToList();
+            if (invalidDeliveries.Any() && weekNumber >= currentWeekNumber)
+            {
+                _mainRepository.RemoveRange(invalidDeliveries);
+                await _mainRepository.CommitAsync();
+                result = result.Except(invalidDeliveries).ToList();
+            }
 
-            return main.ProjectedAs<MainDTO>();
-        }
+            result = result.Where(r => r.Families.DeliveryWeek.Equals(weekReference))
+                .GroupBy(i => i.Families.Id)
+                .Select(g => g.First())
+                .ToList();
 
-        public async Task<IEnumerable<MainDTO>> GetAndGenerateWeeklyBasketDeliveriesAsync(DateTime date, long user)
-        {
+            if (weekNumber < currentWeekNumber)
+            {
+                return result.ProjectedAsCollection<MainDTO>();
+            }
+            if (result.Sum(r => r.Families.Basketquantity) >= 30)
             int daysUntilSaturday = ((int)DayOfWeek.Saturday - (int)date.DayOfWeek + 7) % 7;
             DateTime saturday = date.AddDays(daysUntilSaturday);
             int weekNumber = ISOWeek.GetWeekOfYear(saturday);
@@ -299,8 +311,11 @@ namespace CestasDeMaria.Application.Services
                     });
 
                     family.Updated = DateTime.UtcNow;
-                    await _loggerService.InsertAsync($"Colocando famÌlia {family.Name} de Em Espera para ElegÌvel para a semana {weekReference}", user);
-                    await _familiesHIstoryStatusService.InsertAsync(new DTO.FamilyfamilystatushistoryDTO() 
+            result = await _mainRepository.GetByWeekAndYearNumberAsync(weekNumber, 0, saturday.Year, (weekNumber > currentWeekNumber || !(weekNumber == currentWeekNumber && DateTime.Now.DayOfWeek == DayOfWeek.Saturday)), IncludesMethods.GetIncludes("Families.Familystatus,Basketdeliverystatus", allowInclude));
+            result = result.Where(r => r.Families.DeliveryWeek.Equals(weekReference))
+                .GroupBy(i => i.Families.Id)
+                .Select(g => g.First())
+                .ToList();
                     { 
                         Createdby = user,
                         Updatedby = user,
@@ -370,18 +385,18 @@ namespace CestasDeMaria.Application.Services
             {
                 var worksheet = package.Workbook.Worksheets.Add("Families Report");
 
-                worksheet.Cells[1, 1].Value = "Nome da FamÌlia";
+                worksheet.Cells[1, 1].Value = "Nome da Fam√≠lia";
                 worksheet.Cells[1, 2].Value = "Telefone";
                 worksheet.Cells[1, 3].Value = "Documento";
                 worksheet.Cells[1, 4].Value = "Adultos";
-                worksheet.Cells[1, 5].Value = "CrianÁas";
+                worksheet.Cells[1, 5].Value = "Crian√ßas";
                 worksheet.Cells[1, 6].Value = "Quantidade de Cestas";
-                worksheet.Cells[1, 7].Value = "SituaÁ„o da Moradia";
+                worksheet.Cells[1, 7].Value = "Situa√ß√£o da Moradia";
                 worksheet.Cells[1, 8].Value = "Bairro";
-                worksheet.Cells[1, 9].Value = "EndereÁo";
-                worksheet.Cells[1, 10].Value = "Status da FamÌlia";
-                worksheet.Cells[1, 11].Value = "⁄ltimo Status de Entrega";
-                worksheet.Cells[1, 12].Value = "⁄ltima Data de Entrega";
+                worksheet.Cells[1, 9].Value = "Endere√ßo";
+                worksheet.Cells[1, 10].Value = "Status da Fam√≠lia";
+                worksheet.Cells[1, 11].Value = "√öltimo Status de Entrega";
+                worksheet.Cells[1, 12].Value = "√öltima Data de Entrega";
 
                 var saturdays = deliveries
                                 .Select(d => GetSaturdayOfWeek(d.Created.Year, d.Weekofmonth))

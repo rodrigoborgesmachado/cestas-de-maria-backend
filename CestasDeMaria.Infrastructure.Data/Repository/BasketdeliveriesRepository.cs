@@ -143,7 +143,7 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             var quantityBaskterNotDelivered = _currentContext.Basketdeliveries.Where(d => d.Deliverystatusid.Equals(Enums.GetValue(DeliveryStatus.FALTOU))).Sum(b => b.Families.Basketquantity);
 
             var deliveriesByWeekday = await _currentContext.Basketdeliveries
-                .Where(b => b.Created >= startDate && b.Created <= endDate &&
+                .Where(b => b.Updated >= startDate && b.Updated <= endDate &&
                             b.Deliverystatusid.Equals(Enums.GetValue(DeliveryStatus.ENTREGUE)))
                 .Join(_currentContext.Families,
                       b => b.Familyid,

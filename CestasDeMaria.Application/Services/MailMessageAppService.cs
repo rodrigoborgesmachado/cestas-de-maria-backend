@@ -153,7 +153,7 @@ namespace CestasDeMaria.Application.Services
         {
             try
             {
-                bool sent = await _sendGridService.SendMail(mainDTO.ProjectedAs<Main>());
+                bool sent = await _sendGridService.SendMailV2(mainDTO.ProjectedAs<Main>());
                 mainDTO.Mailmessagefamilystatus = sent ? Enums.StatusMail.Sent.ToString() : Enums.StatusMail.Error.ToString();
             }
             catch (Exception ex)
@@ -181,7 +181,7 @@ namespace CestasDeMaria.Application.Services
         {
             try
             {
-                bool sent = await _sendGridService.SendMail(main);
+                bool sent = await _sendGridService.SendMailV2(main);
                 main.Mailmessagefamilystatus = sent ? Enums.StatusMail.Sent.ToString() : Enums.StatusMail.Error.ToString();
             }
             catch (Exception ex)

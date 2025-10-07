@@ -197,6 +197,21 @@ namespace CestasDeMaria.Application.Services
             return main.ProjectedAs<MainDTO>();
         }
 
+        public async Task DeleteNextNonAttendFamilies(DateTime date, long user)
+        {
+            await _loggerService.InsertAsync($"Iniciando exclusão das visitas que ainda não aconteceram {date.ToString("yyyy-MM-dd")}", user);
+
+            int daysUntilSaturday = ((int)DayOfWeek.Saturday - (int)date.DayOfWeek + 7) % 7;
+            DateTime saturday = date.AddDays(daysUntilSaturday);
+            int weekNumber = ISOWeek.GetWeekOfYear(saturday);
+            int currentWeekNumber = ISOWeek.GetWeekOfYear(DateTime.Now);
+
+            await _mainRepository.DeleteByStatusAndDate(weekNumber, saturday.Year, (int)DeliveryStatus.SOLICITAR);
+            await _mainRepository.CommitAsync();
+
+            await _loggerService.InsertAsync($"Exclusão das visitas que ainda não aconteceram {date.ToString("yyyy-MM-dd")} concluída", user);
+        }
+
         public async Task<IEnumerable<MainDTO>> GetAndGenerateWeeklyBasketDeliveriesAsync(DateTime date, long user)
         {
             int daysUntilSaturday = ((int)DayOfWeek.Saturday - (int)date.DayOfWeek + 7) % 7;

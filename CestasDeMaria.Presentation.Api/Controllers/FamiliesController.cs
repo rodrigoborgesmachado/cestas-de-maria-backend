@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
 using static CestasDeMaria.Infrastructure.CrossCutting.Enums.Enums;
 using IMainAppService = CestasDeMaria.Application.Interfaces.IFamiliesAppService;
+using IBasketDelivery = CestasDeMaria.Application.Interfaces.IBasketdeliveriesAppService;
 using MainDTO = CestasDeMaria.Application.DTO.FamiliesDTO;
 using MainViewModel = CestasDeMaria.Presentation.Model.ViewModels.FamiliesViewModel;
 
@@ -23,6 +24,7 @@ namespace CestasDeMaria.Presentation.Api.Controllers
     public class FamiliesController : ControllerBase, IDisposable
     {
         private readonly IMainAppService _mainAppService;
+        private readonly IBasketDelivery _basketDelivery;
         private readonly Settings _settings;
 
         private readonly TokenHandler tokenController;
@@ -30,12 +32,13 @@ namespace CestasDeMaria.Presentation.Api.Controllers
         /// <summary>
         /// Class constructor
         /// </summary>
-        public FamiliesController(IMainAppService mainAppService, IOptions<Settings> options, IHttpContextAccessor httpContextAccessor)
+        public FamiliesController(IMainAppService mainAppService, IOptions<Settings> options, IHttpContextAccessor httpContextAccessor, IBasketDelivery basketDelivery)
         {
             _mainAppService = mainAppService;
             _settings = options.Value;
 
             tokenController = new TokenHandler(httpContextAccessor);
+            _basketDelivery = basketDelivery;
         }
 
         /// <summary>
@@ -203,6 +206,8 @@ namespace CestasDeMaria.Presentation.Api.Controllers
             mainDto.Updatedby = user.id;
 
             var result = await _mainAppService.UpdateAsync(id, mainDto);
+
+            await _basketDelivery.DeleteNextNonAttendFamilies(DateTime.Now, user.id);
 
             return Ok(result);
         }

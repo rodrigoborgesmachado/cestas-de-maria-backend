@@ -33,5 +33,7 @@ namespace CestasDeMaria.Application.Interfaces
         Task<string> GetFullReport();
 
         Task<IEnumerable<MainDTO>> GetByFamilyAsync(long familyCode, string? include = null);
+
+        Task DeleteNextNonAttendFamilies(DateTime date, long user);
     }
 }

@@ -12,5 +12,7 @@ namespace CestasDeMaria.Domain.Interfaces.Repository
         Task<IEnumerable<Main>> GetByWeekAndYearNumberAsync(int week, int weekReference, int year, bool onlyValid, string[] include = null);
         Task<DashboardStatistics> GetDashboardStatisticsAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<Main>> GetByFamilyAsync(long familyCode, string[] include = null);
+
+        Task DeleteByStatusAndDate(int week, int year, int status);
     }
 }

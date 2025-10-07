@@ -16,5 +16,7 @@
         public string AwsS3DefaultBucket { get; set; }
         public string ForceMailTo { get; set; }
         public string PortalUrl { get; set; }
+        public string MailjetApiKey { get; set; }
+        public string MailjetSecretKey { get; set; }
     }
 }

@@ -56,6 +56,14 @@ namespace CestasDeMaria.Infrastructure.Data.Repository
             return await query.ToListAsync();
         }
 
+        public async Task DeleteByStatusAndDate(int week, int year, int status)
+        {
+            var query = GetQueryable().Where(p => p.Weekofmonth >= week && p.Created.Year.Equals(year) && p.Deliverystatusid.Equals(status));
+            var list = await query.ToListAsync();
+
+            RemoveRange(list);
+        }
+
         public async Task<IEnumerable<Main>> GetByWeekAndYearNumberAsync(int week, int weekReference, int year, bool onlyValid, string[] include = null)
         {
             var query = GetQueryable().Where(p => p.Weekofmonth.Equals(week) && p.Created.Year.Equals(year) && p.Families.DeliveryWeek.Equals(weekReference)).AsNoTracking();
